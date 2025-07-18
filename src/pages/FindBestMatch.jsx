@@ -1,16 +1,22 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { MdOutlineCloudDownload } from "react-icons/md";
+import { toast } from "react-toastify";
+import { getMatches } from "../services/matchesService";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 export default function FindBestMatch() {
   const [jobDescription, setJobDescription] = useState("");
   const [matchedCandidates, setMatchedCandidates] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // ✅ Fetch matches
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!jobDescription.trim()) {
-      alert("Please enter a job description.");
+      toast.warning("Please enter a job description.");
       return;
     }
 
@@ -18,36 +24,65 @@ export default function FindBestMatch() {
     setMatchedCandidates([]);
 
     try {
-      // 👉 Replace with backend call
-      setTimeout(() => {
-        setMatchedCandidates([
-          { name: "Jane Doe", score: 92, email: "jane@example.com" },
-          { name: "John Smith", score: 87, email: "john@example.com" },
-          { name: "Mary Johnson", score: 81, email: "mary@example.com" },
-          { name: "Peter Brown", score: 79, email: "peter@example.com" },
-          { name: "Lina Adams", score: 78, email: "lina@example.com" },
-          { name: "Zoe Chan", score: 77, email: "zoe@example.com" },
-          { name: "Ahmed Khan", score: 75, email: "ahmed@example.com" },
-          { name: "Fatima Ali", score: 74, email: "fatima@example.com" },
-          { name: "Chris Lee", score: 73, email: "chris@example.com" },
-          { name: "Tom Hardy", score: 70, email: "tom@example.com" },
-          { name: "John Smith", score: 87, email: "john@example.com" },
-          { name: "Mary Johnson", score: 81, email: "mary@example.com" },
-          { name: "Peter Brown", score: 79, email: "peter@example.com" },
-          { name: "Lina Adams", score: 78, email: "lina@example.com" },
-          { name: "Zoe Chan", score: 77, email: "zoe@example.com" },
-          { name: "Ahmed Khan", score: 75, email: "ahmed@example.com" },
-          { name: "Fatima Ali", score: 74, email: "fatima@example.com" },
-          { name: "Chris Lee", score: 73, email: "chris@example.com" },
-          { name: "Tom Hardy", score: 70, email: "tom@example.com" },
-        ]);
+      const res = await getMatches(jobDescription);
+
+      if (!res.matches || res.matches.length === 0) {
+        toast.info("No matches found.");
         setLoading(false);
-      }, 1500);
+        return;
+      }
+
+      const scores = res.matches.map((m) => m.Score);
+      const minScore = Math.min(...scores);
+      const maxScore = Math.max(...scores);
+
+      const processed = res.matches.map((m) => {
+        const percentage =
+          maxScore === minScore
+            ? 100
+            : ((maxScore - m.Score) / (maxScore - minScore)) * 100;
+        return {
+          file_name: m.file_name,
+          percentage: percentage.toFixed(2),
+          matched_content: m.Matched_content,
+        };
+      });
+
+      setMatchedCandidates(processed);
     } catch (error) {
       console.error(error);
-      alert("An error occurred while finding matches.");
+      toast.error("An error occurred while finding matches.");
+    } finally {
       setLoading(false);
     }
+  };
+
+  // ✅ Download to Excel
+  const handleDownload = () => {
+    if (matchedCandidates.length === 0) {
+      toast.warning("No matches to download!");
+      return;
+    }
+
+    // Create a worksheet from JSON
+    const worksheet = XLSX.utils.json_to_sheet(
+      matchedCandidates.map((c) => ({
+        "File Name": c.file_name,
+        "Match Score (%)": c.percentage,
+      }))
+    );
+
+    // Create a workbook and append the worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Matches");
+
+    // Generate a buffer and save using FileSaver
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(data, "matched_candidates.xlsx");
   };
 
   return (
@@ -106,14 +141,14 @@ export default function FindBestMatch() {
           </form>
         </div>
 
-        {/* Right column (scrollable list) */}
+        {/* Right column */}
         <div className="md:w-1/2 bg-gray-50 rounded-2xl shadow-inner p-6 flex flex-col">
           <h3 className="text-2xl font-bold mb-4 text-blue-600">
             Matched Applications
           </h3>
           <div
-            className="flex-1 overflow-y-auto"
-            style={{ maxHeight: "300px" }}
+            className="flex-1 overflow-y-auto space-y-4"
+            style={{ maxHeight: "400px" }}
           >
             {loading && (
               <p className="text-gray-500">Searching for matches...</p>
@@ -121,30 +156,37 @@ export default function FindBestMatch() {
             {!loading && matchedCandidates.length === 0 && (
               <p className="text-gray-500">No matches yet.</p>
             )}
-            {!loading && matchedCandidates.length > 0 && (
-              <div className="space-y-4">
-                {matchedCandidates.map((candidate, index) => (
-                  <div
-                    key={index}
-                    className="p-4 rounded-xl bg-white shadow hover:shadow-md transition"
-                  >
-                    <span className="text-bold font-bold">{index + 1}</span>
-                    <h4 className="text-lg font-semibold mb-1">
-                      {candidate.name}
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      Match Score: {candidate.score}%
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Email: {candidate.email}
-                    </p>
+            {!loading &&
+              matchedCandidates.length > 0 &&
+              matchedCandidates.map((candidate, index) => (
+                <div
+                  key={index}
+                  className="p-4 rounded-xl bg-white shadow hover:shadow-md transition"
+                >
+                  <span className="font-bold">{index + 1}.</span>
+                  <h4 className="text-lg font-semibold mb-1">
+                    {candidate.file_name}
+                  </h4>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Match Score:{" "}
+                    <span className="font-bold text-green-600">
+                      {candidate.percentage}%
+                    </span>
+                  </p>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className="bg-green-500 h-2 rounded-full"
+                      style={{ width: `${candidate.percentage}%` }}
+                    ></div>
                   </div>
-                ))}
-              </div>
-            )}
+                </div>
+              ))}
           </div>
           <div className="mt-3 pl-1">
-            <button className="bg-green-500 rounded-lg px-4 py-2 text-white flex items-center gap-2">
+            <button
+              onClick={handleDownload}
+              className="bg-green-500 rounded-lg px-4 py-2 text-white flex items-center gap-2 hover:bg-green-600"
+            >
               Download File
               <MdOutlineCloudDownload className="text-xl" />
             </button>

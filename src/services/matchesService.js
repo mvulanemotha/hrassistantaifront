@@ -19,6 +19,7 @@ async function postJSON(url, data) {
 }
 
 //Helper for Get requests with JSON body
+// Helper for GET requests
 async function getJSON(url) {
   const res = await fetch(url, {
     method: "GET",
@@ -28,23 +29,25 @@ async function getJSON(url) {
   });
 
   if (!res.ok) {
-    //Try to parse JSON error if available
     let errorData;
-
     try {
       errorData = await res.json();
     } catch {
-      throw new Error(errorData.message || "API Error");
+      throw new Error("API Error");
     }
-
-    return res.json(); // ✅ return the JSON body
+    throw new Error(errorData.message || "API Error");
   }
+
+  return res.json(); // ✅ always return parsed JSON if ok
 }
 
-export async function login({ email, password }) {
-  return postJSON(`${apiUrl}login`, { email, password });
+
+export function getMatches(job_description) {
+  const query = encodeURIComponent(job_description);
+  return getJSON(`${apiUrl}compare_job_description?job_description=${query}`);
 }
 
-export async function register({ name, email, password }) {
-  return postJSON(`${apiUrl}newuser`, { name, email, password });
+export function historyMatches() {
+  return getJSON(`${apiUrl}compare_job_description`) 
 }
+

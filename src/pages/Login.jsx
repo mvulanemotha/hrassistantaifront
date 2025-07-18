@@ -1,7 +1,44 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { login } from "../services/authService";
+import { toast } from "react-toastify";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    try {
+      if (email === "" || email === null) {
+        toast.warning("Email Required");
+        return;
+      }
+
+      if (password === "" || password === null) {
+        toast.warning("Password Required");
+        return;
+      }
+
+      const response = await login({ email, password });
+      console.log(response);
+      localStorage.setItem(response.user_id);
+      // redirect to matches
+      if (response.status_code === 200) {
+        navigate("/matchhistory");
+      }
+
+      if (response.status_code === 400) {
+        toast.warning(response.message);
+        return;
+      }
+    } catch (error) {
+      toast.error("Server Error Occured");
+      return;
+    }
+  };
+
   return (
     <div>
       <nav className="flex justify-between items-center px-8 py-4 shadow">
@@ -26,14 +63,16 @@ export default function Login() {
             <span className="font-semibold">HRAssistant AI</span>
           </p>
 
-          <form className="space-y-6">
+          <div className="space-y-6">
             {/* Email */}
             <div>
               <label className="block mb-1 font-medium">Email</label>
               <input
                 type="email"
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
                 className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="you@example.com"
+                placeholder="hr@ia.com"
               />
             </div>
 
@@ -42,6 +81,8 @@ export default function Login() {
               <label className="block mb-1 font-medium">Password</label>
               <input
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="********"
               />
@@ -49,12 +90,12 @@ export default function Login() {
 
             {/* Login Button */}
             <button
-              type="submit"
+              onClick={() => handleLogin()}
               className="w-full bg-blue-600 text-white py-2 rounded-xl text-lg font-medium hover:bg-blue-700 transition"
             >
               Log In
             </button>
-          </form>
+          </div>
 
           <p className="text-center text-sm text-gray-500 mt-6">
             Don’t have an account?{" "}
