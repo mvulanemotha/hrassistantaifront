@@ -1,74 +1,76 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import { register } from "../services/authService";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Register() {
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [isloading, setIsloading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [confirmPassword, setConfirmpassword] = useState("");
 
-  const [name , setName] = useState("")
-  const [password , setPassword] = useState("")
-  const [isloading , setIsloading] = useState(false)
-  const [email , setEmail] = useState("")
-  const [ confirmPassword , setConfirmpassword ] = useState("")
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  const handleRegister = async () => {
+    if (name === "" || name === null) {
+      toast.warning("Name Required");
+      return;
+    }
 
-  const handleRegister = async() => {
- 
-  if(name === "" || name === null){
-    toast.warning("Name Required")
-    return
-  }
+    if (email === "" || email === null) {
+      toast.warning("Email Required");
+      return;
+    }
 
-  if(email === "" || email === null){
-    toast.warning("Email Required")
-    return
-  }
+    if (password === "") {
+      toast.warning("Password Required");
+      return;
+    }
 
-  if(password === ""){
-    toast.warning("Password Required")
-    return
-  }
+    if (confirmPassword === "") {
+      toast.warning("Confirm Password Required");
+      return;
+    }
 
-  if(confirmPassword === ""){
-    toast.warning("Confirm Password Required")
-    return
-  }
+    if (password !== confirmPassword) {
+      toast.warning("Password Missmatch");
+      return;
+    }
 
-  if(password !== confirmPassword){
-    toast.warning("Password Missmatch")
-    return
-  }
+    const userType = localStorage.getItem("userType");
+    console.log(userType)  
 
-  const response = await register({"name": name , "email" : email, "password" : password   })
-  
-  console.log(response)
-  //New user created succesfully
-  if(response.status_code === 201){
-    toast.success("You have registered succesfully")
-    setTimeout(()=> {
-      navigate("/login")
-    },3000)
-  }
+   const response = await register({
+      name: name,
+      email: email,
+      user: userType,
+      password: password,
+    });
 
-  // user already exists
-  if(response.status_code === 400)
-    toast.warning(response.message)
-    return
-  }  
+    console.log(response);
+    //New user created succesfully
+    if (response.status_code === 201) {
+      toast.success("You have registered succesfully");
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
+    }
 
+    // user already exists
+    if (response.status_code === 400) toast.warning(response.message);
+    return;
+  };
 
   return (
     <div>
-      <nav className="flex justify-between items-center px-8 py-4 shadow">
-        <h1 className="text-2xl font-bold text-gray-600">
-          <a href="/" className="hover:text-blue-600">
-            HR Assistant AI
-          </a>
+<nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-400">
+        <Link to="/">
+        <h1 className="text-2xl font-bold text-gray-500 cursor-pointer hover:text-blue-400">
+          AI-Powered Tool
         </h1>
+        </Link>
       </nav>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50 px-4">
         <motion.div
@@ -94,7 +96,7 @@ export default function Register() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Hr Ai Assistant"
+                placeholder=""
               />
             </div>
 
@@ -106,7 +108,7 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="hrassistant@hr.co.sz"
+                placeholder=""
               />
             </div>
 
@@ -118,7 +120,7 @@ export default function Register() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="********"
+                placeholder=""
               />
             </div>
 
@@ -130,7 +132,7 @@ export default function Register() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmpassword(e.target.value)}
                 className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="********"
+                placeholder=""
               />
             </div>
 

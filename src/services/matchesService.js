@@ -41,13 +41,16 @@ async function getJSON(url) {
   return res.json(); // ✅ always return parsed JSON if ok
 }
 
-
 export function getMatches(job_description) {
   const query = encodeURIComponent(job_description);
   return getJSON(`${apiUrl}compare_job_description?job_description=${query}`);
 }
 
 export function historyMatches() {
-  return getJSON(`${apiUrl}compare_job_description`) 
+  return getJSON(`${apiUrl}compare_job_description`);
 }
 
+export function saveMatches(data) {
+  console.log(data)
+  return postJSON(`${apiUrl}save_matches`, data);
+}

@@ -1,62 +1,56 @@
 import { motion } from "framer-motion";
-//import { Button } from "@/components/ui/button"; // optional if using shadcn/ui
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Home() {
+  //assing a userType to allow which type of user is to login or register
+  localStorage.setItem("userType", "HR");
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800">
       {/* Navigation */}
       <nav className="flex justify-between items-center px-8 py-4 shadow">
-        <h1 className="text-2xl font-bold text-gray-800">HR Assistant AI</h1>
-        <div className="space-x-4">
-          <a href="/login" className="hover:text-blue-600 font-bold text-gray-600">
-            Login
-          </a>
-          <a href="/register" className="hover:text-blue-600 font-bold text-gray-600">
-            Register
-          </a>
-        </div>
+        <h1 className="text-2xl font-bold text-gray-500 hover:text-blue-400">HR Assistant AI</h1>
       </nav>
 
       {/* Hero Section */}
- <header className="text-center px-6 py-12 lg:py-20">
-  <motion.h2
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8 }}
-    className="text-4xl lg:text-6xl font-extrabold mb-6"
-  >
-    Your AI-Powered HR Assistant
-  </motion.h2>
-  <p className="text-lg lg:text-xl max-w-2xl mx-auto mb-8">
-    Streamline recruitment, manage applicants, and get insights with the
-    power of AI.
-  </p>
-  <a
-    href="/login"
-    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-medium hover:bg-blue-700 transition"
-  >
-    Get Started
-  </a>
-</header>
+      <header className="text-center px-6 py-12 lg:py-20">
+        <motion.h2
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-4xl lg:text-6xl font-extrabold mb-6 text-gray-400"
+        >
+          Your AI-Powered HR Assistant Tool
+        </motion.h2>
+        <p className="text-lg lg:text-xl max-w-2xl mx-auto mb-8">
+          Streamline recruitment, manage applicants, and get insights with the
+          power of AI.
+        </p>
+        <Link
+          to="/login"
+          className="inline-block bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-medium hover:bg-blue-700 transition"
+        >
+          Get Started
+        </Link>
+      </header>
 
-<section id="features" className="px-6 py-6 bg-white">
-  <h3 className="text-3xl font-bold text-center mb-12">Features</h3>
-  <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-    <FeatureCard
-      title="Resume Parsing"
-      description="Upload and parse resumes with AI-powered extraction."
-    />
-    <FeatureCard
-      title="Smart Screening"
-      description="Rank applicants automatically based on your criteria."
-    />
-    <FeatureCard
-      title="Insights Dashboard"
-      description="Track hiring progress with visual analytics."
-    />
-  </div>
-</section>
-
+      <section id="features" className="px-6 py-6 bg-white">
+        <h3 className="text-3xl font-bold text-center mb-12">Features</h3>
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <FeatureCard
+            title="Resume Parsing"
+            description="Upload and parse resumes with AI-powered extraction."
+          />
+          <FeatureCard
+            title="Smart Screening"
+            description="Rank applicants automatically based on your criteria."
+          />
+          <FeatureCard
+            title="Insights Dashboard"
+            description="Track hiring progress with visual analytics."
+          />
+        </div>
+      </section>
 
       {/* About Section */}
       <section id="about" className="px-6 py-16 bg-gray-50 text-center">
@@ -72,12 +66,12 @@ export default function Home() {
       <section id="contact" className="px-6 py-16 bg-white text-center">
         <h3 className="text-3xl font-bold mb-6">Get in Touch</h3>
         <p className="mb-4">Have questions or need a demo?</p>
-        <a
-          href="/contact"
+        <Link
+          to="/contact"
           className="inline-block bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-medium hover:bg-blue-700 transition"
         >
           Contact Us
-        </a>
+        </Link>
       </section>
 
       {/* Footer */}

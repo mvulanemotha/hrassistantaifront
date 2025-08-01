@@ -1,12 +1,19 @@
 import { motion } from "framer-motion";
 import { FiPhone, FiMail, FiLinkedin } from "react-icons/fi";
 import Header from "../components/Header";
+import { Link } from "react-router-dom";
 
 export default function Contact() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800 flex flex-col">
       {/* ✅ Header */}
-      <Header/>
+      <nav className="flex justify-between items-center px-8 py-4 shadow">
+        <h1 className="text-2xl font-bold text-gray-500">
+          <span  className="hover:text-blue-600 cursor-pointer">
+            HR Assistant AI
+          </span>
+        </h1>
+      </nav>
 
       {/* ✅ Main Section */}
       <section className="flex-1 px-6 py-16 lg:py-24 flex flex-col items-center text-center">
@@ -52,12 +59,12 @@ export default function Contact() {
 
         {/* ✅ Email Button */}
         <div className="mt-12">
-          <a
-            href="mailto:boymotsa@gmail.com"
+          <Link
+            to="mailto:boymotsa@gmail.com"
             className="inline-block bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-medium hover:bg-blue-700 transition shadow-md hover:shadow-lg"
           >
             Send Email
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -72,8 +79,8 @@ export default function Contact() {
 // Reusable ContactCard component
 function ContactCard({ icon, title, value, link }) {
   return (
-    <a
-      href={link}
+    <Link
+      to={link}
       target={link.startsWith("http") ? "_blank" : "_self"}
       rel="noopener noreferrer"
       className="flex flex-col items-center bg-white rounded-2xl shadow-md p-8 hover:shadow-xl transition duration-300"
@@ -81,6 +88,6 @@ function ContactCard({ icon, title, value, link }) {
       <div className="mb-4">{icon}</div>
       <h3 className="text-xl font-semibold mb-2">{title}</h3>
       <p className="text-gray-600">{value}</p>
-    </a>
+    </Link>
   );
 }

@@ -1,41 +1,57 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function UploadCvs() {
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [jobTitle, setJobTitle] = useState("");
 
+  const apiUrl = import.meta.env.VITE_API_URL;
   const handleFileChange = (e) => {
     setSelectedFiles([...e.target.files]);
+  };
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("user_id");
+    toast.success("Logged out successfully.");
+    navigate("/login");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (selectedFiles.length === 0) {
-      alert("Please select at least one CV.");
+      toast.warning("Please select at least one CV.");
       return;
     }
 
+    const user_id = localStorage.getItem("user_id");
+
     const formData = new FormData();
+    formData.append("user_id", user_id);
+    formData.append("job_title", jobTitle);
     selectedFiles.forEach((file) => {
       formData.append("files", file);
     });
 
     try {
-      const response = await fetch("http://localhost:8000/upload", {
+      const response = await fetch(`${apiUrl}upload_cv_embed`, {
         method: "POST",
         body: formData,
       });
 
       if (response.ok) {
-        alert("CV(s) uploaded successfully!");
+        toast.success("CV(s) uploaded successfully!");
         setSelectedFiles([]);
       } else {
-        alert("Upload failed. Please try again.");
+        toast.warning("Upload failed. Please try again.");
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred while uploading.");
+      toast.error("An error occurred while uploading.");
     }
   };
 
@@ -45,8 +61,24 @@ export default function UploadCvs() {
       <nav className="flex justify-between items-center px-8 py-4 shadow">
         <h1 className="text-2xl font-bold text-blue-800">HR Assistant AI</h1>
         <div className="space-x-4">
-          <a href="/findmatch" className="hover:text-blue-600">Find Matches</a>
-          <a href="/contact" className="hover:text-blue-600">Log Out</a>
+          <Link
+            to="/findmatch"
+            className="text-blue-600 hover:text-blue-800 cursor-pointer"
+          >
+            Find Matches
+          </Link>
+          <Link
+            to="/matchhistory"
+            className="text-blue-600 hover:text-blue-800 cursor-pointer"
+          >
+            Matches
+          </Link>
+          <span
+            className="hover:text-red-600 font-bold text-red-400 cursor-pointer"
+            onClick={handleLogout}
+          >
+            Log Out
+          </span>
         </div>
       </nav>
 
@@ -61,18 +93,35 @@ export default function UploadCvs() {
           Upload Your CVs with Ease
         </motion.h2>
         <p className="text-lg max-w-2xl mx-auto mb-4">
-          HRAssistant AI streamlines recruitment by letting you upload multiple CVs at once.
+          HRAssistant AI streamlines recruitment by letting you upload multiple
+          CVs at once.
         </p>
         <p className="text-lg max-w-3xl mx-auto text-gray-600">
-          Our AI-powered engine parses and analyzes your uploaded CVs, helping you shortlist candidates faster and more accurately.
+          Our AI-powered engine parses and analyzes your uploaded CVs, helping
+          you shortlist candidates faster and more accurately.
         </p>
       </section>
 
       {/* ✅ Upload Form Section */}
       <section className="px-6 py-8 mb-16 bg-gray-50">
         <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-lg p-8">
-          <h3 className="text-2xl font-bold mb-6 text-center text-blue-600">Upload CVs</h3>
+          <h3 className="text-2xl font-bold mb-6 text-center text-blue-600">
+            Upload CVs
+          </h3>
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block mb-2 font-medium text-blue-600">
+                Job Title
+              </label>
+              <input
+                type="text"
+                onChange={(e) => setJobTitle(e.target.value)}
+                value={jobTitle}
+                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Data Scientist"
+              />
+            </div>
+
             <input
               type="file"
               multiple

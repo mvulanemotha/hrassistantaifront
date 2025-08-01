@@ -23,10 +23,17 @@ export default function Login() {
 
       const response = await login({ email, password });
       console.log(response);
-      localStorage.setItem(response.user_id);
+      localStorage.setItem("user_id", response.user_id);
+      localStorage.setItem("user_token", response.access_token);
       // redirect to matches
       if (response.status_code === 200) {
-        navigate("/matchhistory");
+        if (response.user === "HR") {
+          navigate("/matchhistory");
+        }
+
+        if(response.user=== "USER"){
+          navigate("/startcomparing")
+        }
       }
 
       if (response.status_code === 400) {
@@ -34,18 +41,17 @@ export default function Login() {
         return;
       }
     } catch (error) {
-      toast.error("Server Error Occured");
+      console.log(error);
+      toast.error("Failed to login.");
       return;
     }
   };
 
   return (
-    <div>
-      <nav className="flex justify-between items-center px-8 py-4 shadow">
-        <h1 className="text-2xl font-bold text-gray-600">
-          <a href="/" className="hover:text-blue-600">
-            HR Assistant AI
-          </a>
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800">
+       <nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-400">
+        <h1 className="text-2xl font-bold text-gray-500 cursor-pointer hover:text-blue-400">
+          AI-Powered Tool
         </h1>
       </nav>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50 px-4">
@@ -72,7 +78,7 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
                 className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="hr@ia.com"
+                placeholder=""
               />
             </div>
 
@@ -84,7 +90,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="********"
+                placeholder=""
               />
             </div>
 

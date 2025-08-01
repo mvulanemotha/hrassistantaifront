@@ -1,19 +1,62 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { MdOutlineCloudDownload } from "react-icons/md";
+import { CiSaveDown2 } from "react-icons/ci";
 import { toast } from "react-toastify";
-import { getMatches } from "../services/matchesService";
+import { getMatches, saveMatches } from "../services/matchesService";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import axios from "axios";
+import { useEffect } from "react";
+import { Link , useNavigate } from "react-router-dom";
 
 export default function FindBestMatch() {
   const [jobDescription, setJobDescription] = useState("");
   const [matchedCandidates, setMatchedCandidates] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [jobTitle, setJobTitles] = useState([]);
+  const [selectedJobTitle, setSelectedJobTitle] = useState("");
+
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const user_id = localStorage.getItem("user_id");
+
+  const navigate = useNavigate() 
+
+
+  const handleLogout = () => {
+  localStorage.removeItem("user_id");
+  toast.success("Logged out successfully.");
+  navigate("/login");
+};
+
+  const handleJobChange = (e) => {
+    setSelectedJobTitle(e.target.value);
+  };
+
+  //using useeffect to get jobtitles on load
+  useEffect(() => {
+    getJobTitles();
+  }, [user_id]);
+
+  //select job titles
+  const getJobTitles = async () => {
+    const res = await axios.get(`${apiUrl}user_cvs/`, {
+      params: { user_id },
+    });
+
+    setJobTitles(Object.keys(res.data));
+  };
 
   // ✅ Fetch matches
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log(selectedJobTitle);
+
+    if (selectedJobTitle === "" || selectedJobTitle === "none") {
+      toast.warning("Please select a job title.");
+      return;
+    }
 
     if (!jobDescription.trim()) {
       toast.warning("Please enter a job description.");
@@ -44,16 +87,38 @@ export default function FindBestMatch() {
         return {
           file_name: m.file_name,
           percentage: percentage.toFixed(2),
+          score: percentage.toFixed(2), //m.Score, // ✅ keep this for saving to DB
           matched_content: m.Matched_content,
         };
       });
 
       setMatchedCandidates(processed);
     } catch (error) {
-      console.error(error);
+      setLoading(false);
       toast.error("An error occurred while finding matches.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  //save matches
+  const saveMatcheFound = async () => {
+    if (matchedCandidates.length === 0) {
+      toast.warning("No matches to save.");
+      return;
+    }
+
+    const user_id = localStorage.getItem("user_id"); //user_id
+    const res = await saveMatches({
+      user_id,
+      jobDescription,
+      matchedCandidates,
+      job_title: selectedJobTitle,
+    });
+    console.log(res);
+
+    if (res) {
+      toast.success("Matches saved successfully.");
     }
   };
 
@@ -69,7 +134,7 @@ export default function FindBestMatch() {
       matchedCandidates.map((c) => ({
         "File Name": c.file_name,
         "Match Score (%)": c.percentage,
-      }))
+      })),
     );
 
     // Create a workbook and append the worksheet
@@ -83,6 +148,9 @@ export default function FindBestMatch() {
     });
     const data = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(data, "matched_candidates.xlsx");
+
+    // ✅ Show success toast
+    toast.success("Matches downloaded successfully, view your file in the download folder.");
   };
 
   return (
@@ -91,12 +159,15 @@ export default function FindBestMatch() {
       <nav className="flex justify-between items-center px-8 py-4 shadow">
         <h1 className="text-2xl font-bold text-blue-600">HRAssistant AI</h1>
         <div className="space-x-4">
-          <a href="/uploadcvs" className="hover:text-blue-600">
+          <Link to="/uploadcvs" className="hover:text-blue-600">
             Upload CVs
-          </a>
-          <a href="/matchhistory" className="hover:text-blue-600">
+          </Link>
+          <Link to="/matchhistory" className="hover:text-blue-600">
             Matches
-          </a>
+          </Link>
+          <span className="text-red-600 font-bold hover:text-red-700 cursor-pointer" onClick={handleLogout}>
+            Log Out
+          </span>
         </div>
       </nav>
 
@@ -119,10 +190,27 @@ export default function FindBestMatch() {
       {/* ✅ Two-column main content */}
       <main className="flex flex-col md:flex-row flex-1 px-6 py-6 gap-6 max-w-7xl mx-auto w-full">
         {/* Left column */}
+
         <div className="md:w-1/2 bg-white rounded-2xl shadow-lg p-6 flex flex-col">
-          <h3 className="text-2xl font-bold mb-4 text-blue-600">
-            Job Description
-          </h3>
+          <div className="p-1 mb-3">
+            <label className="block font-medium mb-2 text-blue-600 text-xl rounded-lg">
+              Select Job Title:
+            </label>
+            <select
+              value={selectedJobTitle}
+              onChange={handleJobChange}
+              className=" border-gray-300 border rounded-lg px-3 py-2 w-full"
+            >
+              <option value="none">-- Select --</option>
+              {jobTitle.map((job, index) => (
+                <option key={index} value={job}>
+                  {job}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <h5 className="text-xl mb-4 text-blue-600">Job Description</h5>
           <form onSubmit={handleSubmit} className="flex flex-col flex-1">
             <textarea
               value={jobDescription}
@@ -143,9 +231,7 @@ export default function FindBestMatch() {
 
         {/* Right column */}
         <div className="md:w-1/2 bg-gray-50 rounded-2xl shadow-inner p-6 flex flex-col">
-          <h3 className="text-2xl font-bold mb-4 text-blue-600">
-            Matched Applications
-          </h3>
+          <h5 className="text-xl mb-4 text-blue-600">Matched Applications</h5>
           <div
             className="flex-1 overflow-y-auto space-y-4"
             style={{ maxHeight: "400px" }}
@@ -182,7 +268,13 @@ export default function FindBestMatch() {
                 </div>
               ))}
           </div>
-          <div className="mt-3 pl-1">
+          <div className="mt-3 pl-1 flex gap-3">
+            <button
+              onClick={saveMatcheFound}
+              className="bg-green-500 rounded-lg px-4 py-2 text-white flex items-center gap-2 hover:bg-green-600"
+            >
+              Save Matches <CiSaveDown2 className="text-xl" />
+            </button>
             <button
               onClick={handleDownload}
               className="bg-green-500 rounded-lg px-4 py-2 text-white flex items-center gap-2 hover:bg-green-600"
