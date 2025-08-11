@@ -3,11 +3,12 @@ import { register } from "../services/authService";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
+import Spinner from "../components/spinner/Spinner";
 
 export default function Register() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [isloading, setIsloading] = useState(false);
+  const [loading, setIsloading] = useState(false);
   const [email, setEmail] = useState("");
   const [confirmPassword, setConfirmpassword] = useState("");
 
@@ -39,16 +40,24 @@ export default function Register() {
       return;
     }
 
-    const userType = localStorage.getItem("userType");
-    console.log(userType)  
+    if (!isValidEmail(email)) {
+      toast.warning("Invalid email format");
+      return;
+    }
 
-   const response = await register({
+    const userType = localStorage.getItem("userType");
+    console.log(userType);
+
+    setIsloading(true);
+    const response = await register({
       name: name,
       email: email,
       user: userType,
       password: password,
+    }).catch((err) => {
+      setIsloading(false);
     });
-
+    setIsloading(false);
     console.log(response);
     //New user created succesfully
     if (response.status_code === 201) {
@@ -63,13 +72,16 @@ export default function Register() {
     return;
   };
 
+  const isValidEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
   return (
     <div>
-<nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-400">
+      <nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-400">
         <Link to="/">
-        <h1 className="text-2xl font-bold text-gray-500 cursor-pointer hover:text-blue-400">
-          AI-Powered Tool
-        </h1>
+          <div className="text-2xl font-bold border-b text-red-500">HireAI</div>
         </Link>
       </nav>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50 px-4">
@@ -80,10 +92,12 @@ export default function Register() {
           className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full"
         >
           <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">
-            Create Your Account
+            Create Account
           </h1>
           <p className="text-center text-gray-500 mb-8">
-            Join <span className="font-semibold">HRAssistant AI</span> and get
+            Join <span className="font-semibold"><span className="p-1 text-2xl font-bold border-b text-red-500">
+          HireAI
+        </span></span>and get
             started today!
           </p>
 
@@ -141,7 +155,13 @@ export default function Register() {
               onClick={() => handleRegister()}
               className="w-full bg-blue-600 text-white py-2 rounded-xl text-lg font-medium hover:bg-blue-700 transition"
             >
-              Sign Up
+              {loading ? (
+                <span className="flex justify-center items-center gap-2 text-white">
+                  Signing Up <Spinner width="5" height="5" />
+                </span>
+              ) : (
+                "Sign Up"
+              )}
             </button>
           </div>
 

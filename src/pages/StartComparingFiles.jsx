@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Header from "../components/Header";
 
 const StartComparingFiles = () => {
   // State for text inputs
@@ -107,11 +108,7 @@ const StartComparingFiles = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800">
       {/* Navigation */}
-      <nav className="flex justify-between items-center px-8 py-4 shadow">
-        <h1 className="text-2xl font-bold text-gray-500">
-          Your AI-Powered Tool
-        </h1>
-      </nav>
+      <Header/>
 
       {/* Hero Section */}
       <header className="text-center px-6 py-12 lg:py-20">
@@ -165,12 +162,15 @@ const StartComparingFiles = () => {
             <span className="pl-4 text-red-500 font-bold underline">
               {scoreText}
             </span>
+            <span>
+              
+            </span>
           </div>
 
           {/* File Uploads */}
           <div className="bg-white rounded-2xl shadow p-6">
-            <h4 className="text-xl font-semibold underline text-green-600 mb-8">
-              Upload Files
+            <h4 className="text-xl font-semibold underline text-blue-600 mb-8">
+              Upload Files & Compare
             </h4>
             <label className="block mb-2 font-medium">Job Advert</label>
             <input
@@ -179,7 +179,7 @@ const StartComparingFiles = () => {
               className="w-full mb-6 border rounded-xl p-2"
               onChange={(e) => setJobDescriptionFile(e.target.files[0])}
             />
-            <label className="block mb-2 font-medium">Your CV File</label>
+            <label className="block mb-2 font-medium">Your CV</label>
             <input
               type="file"
               accept=".pdf,.docx,.txt,.doc"

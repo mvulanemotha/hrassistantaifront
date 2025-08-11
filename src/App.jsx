@@ -6,46 +6,41 @@ import UploadCvs from "./pages/UploadCvs";
 import FindBestMatch from "./pages/FindBestMatch";
 import Contact from "./pages/Contact";
 import MatchHistory from "./pages/MatchHistory";
-import CompareAdvertCv from "./pages/CompareAdvertCv"; // ✅ correct
+import CompareAdvertCv from "./pages/CompareAdvertCv";
 import ProtectedRoute from "./components/ProtectedRoute";
 import StartComparingFiles from "./pages/StartComparingFiles";
+import AppLayout from "./components/layout/AppLayout";
+import GenerateCv from "./pages/generateCv";
+import StripeAddUnitsWrapper from "./wrapper/StripeAddUnitsWrapper"; // add import
 
 function App() {
+
   return (
-    <>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/uploadcvs"
-          element={
-            <ProtectedRoute>
-              <UploadCvs />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/findmatch"
-          element={
-            <ProtectedRoute>
-              <FindBestMatch />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/contact" element={<Contact />} />
-        <Route
-          path="/matchhistory"
-          element={
-            <ProtectedRoute>
-              <MatchHistory />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/comparecvs" element={<CompareAdvertCv />} />
-        <Route path="/startcomparing" element={ <StartComparingFiles/> } />
-      </Routes>
-    </>
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<Home />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/contact" element={<Contact />} />
+
+      {/* Routes that use the sidebar layout */}
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="uploadcvs" element={<UploadCvs />} />
+        <Route path="findmatch" element={<FindBestMatch />} />
+        <Route path="matchhistory" element={<MatchHistory />} />
+        <Route path="startcomparing" element={<StartComparingFiles />} />
+        <Route path="addunits" element={<StripeAddUnitsWrapper />} />
+        <Route path="generatecv" element={<GenerateCv />} />
+      </Route>
+      <Route path="comparecvs" element={<CompareAdvertCv />} />
+    </Routes>
   );
 }
 

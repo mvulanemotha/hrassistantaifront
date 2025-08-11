@@ -3,11 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { login } from "../services/authService";
 import { toast } from "react-toastify";
+import Spinner from "../components/spinner/Spinner";
+import axios from "axios";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleLogin = async () => {
     try {
@@ -21,18 +25,30 @@ export default function Login() {
         return;
       }
 
+      setLoading(true);
       const response = await login({ email, password });
+
       console.log(response);
+
+      setLoading(false);
       localStorage.setItem("user_id", response.user_id);
       localStorage.setItem("user_token", response.access_token);
+      localStorage.setItem("name", response.name);
+      localStorage.setItem("userType", response.user);
+
+      if (response) {
+        console.log("TESTING WE ARE IN");
+        getUserCredits();
+      }
+
       // redirect to matches
       if (response.status_code === 200) {
         if (response.user === "HR") {
           navigate("/matchhistory");
         }
 
-        if(response.user=== "USER"){
-          navigate("/startcomparing")
+        if (response.user === "USER") {
+          navigate("/startcomparing");
         }
       }
 
@@ -42,17 +58,34 @@ export default function Login() {
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);
       toast.error("Failed to login.");
       return;
     }
   };
 
+  // get credits of a user
+  const getUserCredits = async () => {
+    try {
+      await axios
+        .get(`${apiUrl}get_credits/${localStorage.getItem("user_id")}`)
+        .then((res) => {
+          const creditData = res.data;
+
+          const total = creditData.reduce((sum, item) => sum + item.amount, 0);
+
+          console.log(total);
+          localStorage.setItem("credits", total);
+        });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800">
-       <nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-400">
-        <h1 className="text-2xl font-bold text-gray-500 cursor-pointer hover:text-blue-400">
-          AI-Powered Tool
-        </h1>
+      <nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-400">
+        <div className="text-2xl font-bold border-b text-red-500">HireAI</div>
       </nav>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50 px-4">
         <motion.div
@@ -65,8 +98,10 @@ export default function Login() {
             Welcome Back
           </h1>
           <p className="text-center text-gray-500 mb-8">
-            Sign in to continue to{" "}
-            <span className="font-semibold">HRAssistant AI</span>
+            Sign in to continue with{" "}
+            <div className="p-4 text-2xl font-bold border-b text-red-500">
+              HireAI
+            </div>
           </p>
 
           <div className="space-y-6">
@@ -97,9 +132,16 @@ export default function Login() {
             {/* Login Button */}
             <button
               onClick={() => handleLogin()}
-              className="w-full bg-blue-600 text-white py-2 rounded-xl text-lg font-medium hover:bg-blue-700 transition"
+              disabled={loading}
+              className="text-white w-full bg-blue-600 py-2 rounded-xl text-lg font-medium hover:bg-blue-700 transition"
             >
-              Log In
+              {loading ? (
+                <span className="flex justify-center items-center gap-2 text-white">
+                  Signing In <Spinner width="5" height="5" />
+                </span>
+              ) : (
+                "Sign In"
+              )}
             </button>
           </div>
 

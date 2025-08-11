@@ -8,7 +8,7 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import axios from "axios";
 import { useEffect } from "react";
-import { Link , useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 
 export default function FindBestMatch() {
   const [jobDescription, setJobDescription] = useState("");
@@ -19,15 +19,6 @@ export default function FindBestMatch() {
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const user_id = localStorage.getItem("user_id");
-
-  const navigate = useNavigate() 
-
-
-  const handleLogout = () => {
-  localStorage.removeItem("user_id");
-  toast.success("Logged out successfully.");
-  navigate("/login");
-};
 
   const handleJobChange = (e) => {
     setSelectedJobTitle(e.target.value);
@@ -156,20 +147,7 @@ export default function FindBestMatch() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800 flex flex-col">
       {/* ✅ Header */}
-      <nav className="flex justify-between items-center px-8 py-4 shadow">
-        <h1 className="text-2xl font-bold text-blue-600">HRAssistant AI</h1>
-        <div className="space-x-4">
-          <Link to="/uploadcvs" className="hover:text-blue-600">
-            Upload CVs
-          </Link>
-          <Link to="/matchhistory" className="hover:text-blue-600">
-            Matches
-          </Link>
-          <span className="text-red-600 font-bold hover:text-red-700 cursor-pointer" onClick={handleLogout}>
-            Log Out
-          </span>
-        </div>
-      </nav>
+      <Header/>
 
       {/* ✅ Hero Section */}
       <section className="text-center px-6 py-10 lg:py-16">

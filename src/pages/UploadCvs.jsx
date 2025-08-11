@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 
 export default function UploadCvs() {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -58,29 +59,7 @@ export default function UploadCvs() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800">
       {/* ✅ Header (same as landing page) */}
-      <nav className="flex justify-between items-center px-8 py-4 shadow">
-        <h1 className="text-2xl font-bold text-blue-800">HR Assistant AI</h1>
-        <div className="space-x-4">
-          <Link
-            to="/findmatch"
-            className="text-blue-600 hover:text-blue-800 cursor-pointer"
-          >
-            Find Matches
-          </Link>
-          <Link
-            to="/matchhistory"
-            className="text-blue-600 hover:text-blue-800 cursor-pointer"
-          >
-            Matches
-          </Link>
-          <span
-            className="hover:text-red-600 font-bold text-red-400 cursor-pointer"
-            onClick={handleLogout}
-          >
-            Log Out
-          </span>
-        </div>
-      </nav>
+      <Header/>  
 
       {/* ✅ Hero Section */}
       <section className="text-center px-6 py-16 lg:py-24">

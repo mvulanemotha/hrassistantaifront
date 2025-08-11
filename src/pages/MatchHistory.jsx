@@ -5,9 +5,10 @@ import { handleMatchDownload } from "../services/downloadMatches";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { MdPersonSearch } from "react-icons/md";
+import Header from "../components/Header";
 
 export default function MatchHistory() {
-  // 👇 Dummy data – replace with API data
+  
   const [history, setHistory] = useState([]);
 
   const user_id = localStorage.getItem("user_id");
@@ -17,14 +18,6 @@ export default function MatchHistory() {
   useEffect(() => {
     getPastMatches();
   }, [user_id]);
-
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("user_id");
-    toast.success("Logged out successfully.");
-    navigate("/login");
-  };
 
   //get history matches
   const getPastMatches = async () => {
@@ -62,30 +55,7 @@ export default function MatchHistory() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800 flex flex-col">
       {/* ✅ Header */}
-      <nav className="flex justify-between items-center px-8 py-4 shadow">
-        <h1 className="text-2xl font-bold text-gray-800">HR Assistant AI</h1>
-        <div className="space-x-4">
-          <Link
-            to="/findmatch"
-            className="hover:text-blue-600 font-bold text-gray-600"
-          >
-            Find Matches
-          </Link>
-
-          <Link
-            to="/uploadcvs"
-            className="hover:text-blue-600 font-bold text-gray-600"
-          >
-            Upload CVs
-          </Link>
-          <span
-            className="font-bold text-red-400 hover:text-red-600 cursor-pointer"
-            onClick={handleLogout}
-          >
-            Log Out
-          </span>
-        </div>
-      </nav>
+      <Header/>   
 
       {/* ✅ Main Content */}
       <section className="flex-1 px-6 py-16 lg:py-24">
@@ -108,9 +78,9 @@ export default function MatchHistory() {
               Start uploading CVs to see matches appear here.
             </p>
             <Link to="/uploadcvs">
-            <p className="mt-8 hover:cursor-pointer font-bold text-blue-500 text-2xl underline">
-              Upload CV'S
-            </p>
+              <p className="mt-8 hover:cursor-pointer font-bold text-blue-500 text-2xl underline">
+                Upload CV'S
+              </p>
             </Link>
           </div>
         ) : (
