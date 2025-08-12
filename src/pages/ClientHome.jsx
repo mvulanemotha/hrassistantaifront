@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 
-const CompareAdvertCv = () => {
+const ClientHome = () => {
   // State for text inputs
   const [jobDescriptionText, setJobDescriptionText] = useState("");
   const [cvText, setCvText] = useState("");
@@ -32,10 +32,8 @@ const CompareAdvertCv = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800">
       {/* Navigation */}
-      <nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-gray-500 cursor-pointer hover:text-blue-400">
-          Your AI-Powered Tool
-        </h1>
+      <nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-400">
+        <div className="text-2xl font-bold border-b text-red-500">HireAI</div>
       </nav>
 
       {/* Hero Section */}
@@ -103,4 +101,4 @@ function FeatureCard({ title, description }) {
   );
 }
 
-export default CompareAdvertCv;
+export default ClientHome;

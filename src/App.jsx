@@ -6,7 +6,7 @@ import UploadCvs from "./pages/UploadCvs";
 import FindBestMatch from "./pages/FindBestMatch";
 import Contact from "./pages/Contact";
 import MatchHistory from "./pages/MatchHistory";
-import CompareAdvertCv from "./pages/CompareAdvertCv";
+import ClientHome from "./pages/ClientHome";
 import ProtectedRoute from "./components/ProtectedRoute";
 import StartComparingFiles from "./pages/StartComparingFiles";
 import AppLayout from "./components/layout/AppLayout";
@@ -39,7 +39,7 @@ function App() {
         <Route path="addunits" element={<StripeAddUnitsWrapper />} />
         <Route path="generatecv" element={<GenerateCv />} />
       </Route>
-      <Route path="comparecvs" element={<CompareAdvertCv />} />
+      <Route path="comparecvs" element={<ClientHome />} />
     </Routes>
   );
 }

@@ -7,12 +7,8 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800 flex flex-col">
       {/* ✅ Header */}
-      <nav className="flex justify-between items-center px-8 py-4 shadow">
-        <h1 className="text-2xl font-bold text-gray-500">
-          <span  className="hover:text-blue-600 cursor-pointer">
-            HR Assistant AI
-          </span>
-        </h1>
+      <nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-400">
+        <div className="text-2xl font-bold border-b text-red-500">HireAI</div>
       </nav>
 
       {/* ✅ Main Section */}

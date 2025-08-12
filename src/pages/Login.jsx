@@ -97,12 +97,12 @@ export default function Login() {
           <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">
             Welcome Back
           </h1>
-          <p className="text-center text-gray-500 mb-8">
+          <div className="text-center text-gray-500 mb-8">
             Sign in to continue with{" "}
             <div className="p-4 text-2xl font-bold border-b text-red-500">
               HireAI
             </div>
-          </p>
+          </div>
 
           <div className="space-y-6">
             {/* Email */}

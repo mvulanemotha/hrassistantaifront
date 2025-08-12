@@ -5,7 +5,6 @@ const templates = [
   { name: "ATS classic HR resume" },
   { name: "Attorney resume" },
   { name: "Basic sales resume" },
-
 ];
 
 const GenerateCv = () => {
@@ -15,13 +14,14 @@ const GenerateCv = () => {
   const [uploadStatus, setUploadStatus] = useState("");
   const [cvName, setCvName] = useState("");
   const [generatedPdfUrl, setGeneratedPdfUrl] = useState(null);
+  const [generatedDocxUrl, setGeneratedDocxUrl] = useState(null);
 
   const itemsPerPage = 3;
   const totalPages = Math.ceil(templates.length / itemsPerPage);
 
   const paginatedTemplates = templates.slice(
     page * itemsPerPage,
-    page * itemsPerPage + itemsPerPage,
+    page * itemsPerPage + itemsPerPage
   );
 
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -41,22 +41,23 @@ const GenerateCv = () => {
     }
 
     try {
-      // Fetch PDF template file blob from public folder
-      const pdfTemplatePath = `cv_templates/word/${cvName}.docx`;
-      const pdfResponse = await fetch(pdfTemplatePath);
-      if (!pdfResponse.ok) {
+      const templatePath = `cv_templates/word/${cvName}.docx`;
+      const templateResponse = await fetch(templatePath);
+
+      if (!templateResponse.ok) {
         setUploadStatus("Failed to load template word.");
         return;
       }
-      const docxBlob = await pdfResponse.blob();
+      const docxBlob = await templateResponse.blob();
 
-      const pdfFileTemplate = new File([docxBlob], `${cvName}.docx`, {
-        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      const templateFile = new File([docxBlob], `${cvName}.docx`, {
+        type:
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       });
 
       const formData = new FormData();
       formData.append("user_cv", selectedFile);
-      formData.append("template_file", pdfFileTemplate);
+      formData.append("template_file", templateFile);
 
       const res = await fetch(`${apiUrl}generate_cv`, {
         method: "POST",
@@ -67,12 +68,30 @@ const GenerateCv = () => {
         throw new Error("Upload failed");
       }
 
-      // Receive generated PDF as blob
-      const generatedPdfBlob = await res.blob();
+      // Backend returns JSON with base64 encoded 'pdf' and 'docx'
+      const data = await res.json();
 
-      // Create object URL for preview and download
-      const url = window.URL.createObjectURL(generatedPdfBlob);
-      setGeneratedPdfUrl(url);
+      // Convert base64 PDF to Blob URL
+      const pdfBlob = new Blob(
+        [Uint8Array.from(atob(data.pdf), (c) => c.charCodeAt(0))],
+        { type: "application/pdf" }
+      );
+      const pdfUrl = window.URL.createObjectURL(pdfBlob);
+
+      // Convert base64 DOCX to Blob URL
+      const docxBlob2 = new Blob(
+        [Uint8Array.from(atob(data.docx), (c) => c.charCodeAt(0))],
+        {
+          type:
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        }
+      );
+      const docxUrl = window.URL.createObjectURL(docxBlob2);
+
+      // Set URLs for preview and download
+      setGeneratedPdfUrl(pdfUrl);
+      setGeneratedDocxUrl(docxUrl);
+
       setUploadStatus("Upload successful! ✅");
     } catch (err) {
       console.error(err);
@@ -80,20 +99,21 @@ const GenerateCv = () => {
     }
   };
 
-  // Clean up blob URL to avoid memory leaks
+  // Clean up blob URLs on unmount or update to avoid memory leaks
   useEffect(() => {
     return () => {
       if (generatedPdfUrl) {
         window.URL.revokeObjectURL(generatedPdfUrl);
       }
+      if (generatedDocxUrl) {
+        window.URL.revokeObjectURL(generatedDocxUrl);
+      }
     };
-  }, [generatedPdfUrl]);
+  }, [generatedPdfUrl, generatedDocxUrl]);
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center">
-        Select a CV Template
-      </h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Select a CV Template</h2>
 
       <div className="flex justify-between items-center mb-4">
         <button
@@ -155,9 +175,7 @@ const GenerateCv = () => {
 
       {/* Upload Section */}
       <div className="mt-10 border-t pt-6">
-        <h3 className="text-xl font-semibold mb-4 text-center">
-          Upload Your CV
-        </h3>
+        <h3 className="text-xl font-semibold mb-4 text-center">Upload Your CV</h3>
         <div className="flex flex-col sm:flex-row items-center gap-4 justify-center">
           <input
             type="file"
@@ -173,20 +191,18 @@ const GenerateCv = () => {
           </button>
         </div>
         {uploadStatus && (
-          <p className="mt-3 text-center text-sm text-gray-600">
-            {uploadStatus}
-          </p>
+          <p className="mt-3 text-center text-sm text-gray-600">{uploadStatus}</p>
         )}
 
         {/* PDF Preview & Download */}
         {generatedPdfUrl && (
           <div className="mt-6">
             <h3 className="text-lg font-semibold mb-2 text-center">
-              Generated CV Preview
+              Generated CV PDF Preview
             </h3>
             <iframe
               src={generatedPdfUrl}
-              title="Generated CV Preview"
+              title="Generated CV PDF Preview"
               width="100%"
               height="600px"
               className="border"
@@ -195,11 +211,24 @@ const GenerateCv = () => {
               <a
                 href={generatedPdfUrl}
                 download={`${cvName}_generated_cv.pdf`}
-                className="inline-block mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                className="inline-block mt-2 px-6 py-2 bg-green-600 text-white rounded-full hover:bg-green-700"
               >
                 Download PDF
               </a>
             </div>
+          </div>
+        )}
+
+        {/* DOCX Download (no preview) */}
+        {generatedDocxUrl && (
+          <div className="mt-2 text-center">
+            <a
+              href={generatedDocxUrl}
+              download={`${cvName}_generated_cv.docx`}
+              className="inline-block mt-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700"
+            >
+              Download DOCX
+            </a>
           </div>
         )}
       </div>

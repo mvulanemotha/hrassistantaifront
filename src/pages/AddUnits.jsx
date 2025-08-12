@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Header from "../components/Header";
 import StripePayment from "../components/payment/Stripe";
 import MtnPayment from "../components/payment/MtnPayment";
 import PaypalPayment from "../components/payment/PaypalPayment";
@@ -23,7 +22,7 @@ const AddUnits = ({ amount, paymentType }) => {
           />
         )}
 
-        {paymentType === "mtn" && (
+        {paymentType === "paypal" && (
           <PaypalPayment
             amount={amount}
             loading={loading}
@@ -32,7 +31,7 @@ const AddUnits = ({ amount, paymentType }) => {
           />
         )}
 
-        {paymentType === "paypal" && (
+        {paymentType === "mtn" && (
           <MtnPayment
             amount={amount}
             loading={loading}

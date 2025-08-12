@@ -8,8 +8,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800">
       {/* Navigation */}
-      <nav className="flex justify-between items-center px-8 py-4 shadow">
-        <h1 className="text-2xl font-bold text-gray-500 hover:text-blue-400">HR Assistant AI</h1>
+      <nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-400">
+        <div className="text-2xl font-bold border-b text-red-500">HireAI</div>
       </nav>
 
       {/* Hero Section */}
