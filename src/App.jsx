@@ -11,7 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import StartComparingFiles from "./pages/StartComparingFiles";
 import AppLayout from "./components/layout/AppLayout";
 import GenerateCv from "./pages/generateCv";
-import StripeAddUnitsWrapper from "./wrapper/StripeAddUnitsWrapper"; // add import
+import AddUnits from "./pages/AddUnits"
 
 function App() {
 
@@ -36,7 +36,7 @@ function App() {
         <Route path="findmatch" element={<FindBestMatch />} />
         <Route path="matchhistory" element={<MatchHistory />} />
         <Route path="startcomparing" element={<StartComparingFiles />} />
-        <Route path="addunits" element={<StripeAddUnitsWrapper />} />
+        <Route path="addunits" element={<AddUnits />} />
         <Route path="generatecv" element={<GenerateCv />} />
       </Route>
       <Route path="comparecvs" element={<ClientHome />} />

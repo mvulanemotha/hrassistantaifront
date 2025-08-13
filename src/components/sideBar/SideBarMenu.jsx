@@ -1,6 +1,10 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaHome, FaUserAlt, FaCog, FaBars } from "react-icons/fa";
+import { FaUserAlt, FaBars, FaCloudDownloadAlt } from "react-icons/fa";
+import { IoCloudUploadOutline } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
+import { GrCompare ,GrSearchAdvanced } from "react-icons/gr";
+import { ImHistory } from "react-icons/im";
+import { BsCreditCard2Back } from "react-icons/bs";
 import { toast } from "react-toastify";
 
 const SidebarMenu = ({ isOpen, setIsOpen }) => {
@@ -50,36 +54,48 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 to="/uploadcvs"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition ${
+                  `flex items-center gap-3  py-2 rounded-lg hover:bg-blue-100 transition ${
                     isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
                   }`
                 }
               >
-                <FaHome />
+                <IoCloudUploadOutline className="h-6 w-12" />
                 Upload CVs
               </NavLink>
               <NavLink
                 to="/findmatch"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition ${
+                  `flex items-center gap-3  py-2 rounded-lg hover:bg-blue-100 transition ${
                     isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
                   }`
                 }
               >
-                <FaUserAlt />
+                <GrSearchAdvanced className="h-6 w-12" />
                 Find Best Matches
+              </NavLink>
+                   <NavLink
+                to="/startcomparing"
+                onClick={handleLinkClick}
+                className={({ isActive }) =>
+                  `flex items-center gap-3  py-2 rounded-lg hover:bg-blue-100 transition ${
+                    isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
+                  }`
+                }
+              >
+                <GrCompare className="h-6 w-12" />
+                Compare Cv
               </NavLink>
               <NavLink
                 to="/matchhistory"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition ${
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
                     isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
                   }`
                 }
               >
-                <FaCog />
+                <ImHistory className="h-6 w-12" />
                 Match History
               </NavLink>
             </>
@@ -92,37 +108,37 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 to="/startcomparing"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition ${
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
                     isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
                   }`
                 }
               >
-                <FaHome />
+                <GrCompare className="h-6 w-12" />
                 Compare CV
               </NavLink>
               <NavLink
                 to="/generatecv"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition ${
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
                     isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
                   }`
                 }
               >
-                <FaUserAlt />
+                <FaCloudDownloadAlt className="h-6 w-12 text-gray-500" />
                 Generate CV
               </NavLink>
               <NavLink
                 to="/addunits"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-100 transition ${
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
                     isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
                   }`
                 }
               >
-                <FaUserAlt />
-                Add Units
+                <BsCreditCard2Back className="h-6 w-12 text-orange-500" />
+                Add Credits
               </NavLink>
             </>
           )}
