@@ -12,6 +12,8 @@ import StartComparingFiles from "./pages/StartComparingFiles";
 import AppLayout from "./components/layout/AppLayout";
 import GenerateCv from "./pages/generateCv";
 import AddUnits from "./pages/AddUnits"
+import Settings from "./pages/Settings";
+import Chargies from "./pages/Chargies";
 
 function App() {
 
@@ -38,6 +40,9 @@ function App() {
         <Route path="startcomparing" element={<StartComparingFiles />} />
         <Route path="addunits" element={<AddUnits />} />
         <Route path="generatecv" element={<GenerateCv />} />
+        <Route path="settings" element={ <Settings/> } />
+        <Route path="chargies" element={<Chargies/>} />
+
       </Route>
       <Route path="comparecvs" element={<ClientHome />} />
     </Routes>

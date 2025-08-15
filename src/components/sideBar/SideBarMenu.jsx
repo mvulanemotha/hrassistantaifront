@@ -5,6 +5,8 @@ import { MdLogout } from "react-icons/md";
 import { GrCompare ,GrSearchAdvanced } from "react-icons/gr";
 import { ImHistory } from "react-icons/im";
 import { BsCreditCard2Back } from "react-icons/bs";
+import { CiSettings } from "react-icons/ci";
+import { FcDataSheet } from "react-icons/fc";
 import { toast } from "react-toastify";
 
 const SidebarMenu = ({ isOpen, setIsOpen }) => {
@@ -139,6 +141,30 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
               >
                 <BsCreditCard2Back className="h-6 w-12 text-orange-500" />
                 Add Credits
+              </NavLink>
+                <NavLink
+                to="/chargies"
+                onClick={handleLinkClick}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
+                    isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
+                  }`
+                }
+              >
+                <FcDataSheet  className="h-8 w-12 text-gray-800" />
+                Chargies
+              </NavLink>
+              <NavLink
+                to="/settings"
+                onClick={handleLinkClick}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
+                    isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
+                  }`
+                }
+              >
+                <CiSettings className="h-8 w-12 text-gray-800" />
+                Settings
               </NavLink>
             </>
           )}

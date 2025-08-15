@@ -28,7 +28,7 @@ export default function Home() {
         </p>
         <Link
           to="/login"
-          className="inline-block bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-medium hover:bg-blue-700 transition"
+          className="inline-block bg-blue-600 text-white px-10 py-2 rounded-full text-lg font-medium hover:bg-blue-700 transition"
         >
           Get Started
         </Link>
@@ -68,7 +68,7 @@ export default function Home() {
         <p className="mb-4">Have questions or need a demo?</p>
         <Link
           to="/contact"
-          className="inline-block bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-medium hover:bg-blue-700 transition"
+          className="inline-block bg-blue-600 text-white px-10 py-2 rounded-full text-lg font-medium hover:bg-blue-700 transition"
         >
           Contact Us
         </Link>

@@ -34,8 +34,11 @@ const AddUnits = () => {
           user_id : localStorage.getItem("user_id")
         })
         .then((data) => {
-          console.log(data);
+          setAmount("")
           setLoading(false);
+          if(data.data.status_code === 202){
+            toast.info("Waiting for approval thankyou.")
+          }
         })
         .catch((err) => {
           setLoading(false);
@@ -57,7 +60,7 @@ const AddUnits = () => {
         {/* buttons to be selected */}
         <div className="pt-4">
           <button className="bg-yellow-500 p-3 px-6 py-2 rounded-full text-gray-600 font-bold">
-            Mobile Money
+            MTN MoMo
           </button>
         </div>
         {/* Display areas */}

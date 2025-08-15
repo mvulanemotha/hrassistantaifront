@@ -45,6 +45,14 @@ export async function login({ email, password }) {
   return postJSON(`${apiUrl}login`, { email, password });
 }
 
-export async function register({ name, email, user , password }) {
-  return postJSON(`${apiUrl}newuser`, { name, email, user ,  password });
+export async function register({
+  name,
+  email,
+  user,
+  password,
+  country,
+  contact,
+}) {
+  return postJSON(`${apiUrl}newuser`, {name,email,user,password,country,contact,
+  });
 }

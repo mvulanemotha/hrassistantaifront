@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { login } from "../services/authService";
 import { toast } from "react-toastify";
 import Spinner from "../components/spinner/Spinner";
@@ -35,9 +35,9 @@ export default function Login() {
       localStorage.setItem("user_token", response.access_token);
       localStorage.setItem("name", response.name);
       localStorage.setItem("userType", response.user);
+      localStorage.setItem("email", response.email)
 
       if (response) {
-        console.log("TESTING WE ARE IN");
         getUserCredits();
       }
 
@@ -82,6 +82,23 @@ export default function Login() {
     }
   };
 
+  // get chargies
+  const getChargies = async () => {
+    try {
+      await axios.get(`${apiUrl}chargies`).then((data) => {
+        if (data.status === 200) {
+          localStorage.setItem("chargies", JSON.stringify(data.data));
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getChargies();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800">
       <nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-400">
@@ -95,7 +112,7 @@ export default function Login() {
           className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full"
         >
           <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">
-            Welcome Back
+            Welcome
           </h1>
           <div className="text-center text-gray-500 mb-8">
             Sign in to continue with{" "}

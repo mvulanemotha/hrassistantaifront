@@ -11,26 +11,61 @@ export default function Register() {
   const [loading, setIsloading] = useState(false);
   const [email, setEmail] = useState("");
   const [confirmPassword, setConfirmpassword] = useState("");
+  const [contact, setContact] = useState("");
+  const [country, setCountry] = useState("Eswatini");
+  const [countries, setCountries] = useState([
+    { name: "Eswatini", code: "SZ", phone_code: "+268" },
+    { name: "Angola", code: "AO", phone_code: "+244" },
+    { name: "Botswana", code: "BW", phone_code: "+267" },
+    { name: "Comoros", code: "KM", phone_code: "+269" },
+    {
+      name: "Democratic Republic of the Congo",
+      code: "CD",
+      phone_code: "+243",
+    },
+    { name: "Lesotho", code: "LS", phone_code: "+266" },
+    { name: "Madagascar", code: "MG", phone_code: "+261" },
+    { name: "Malawi", code: "MW", phone_code: "+265" },
+    { name: "Mauritius", code: "MU", phone_code: "+230" },
+    { name: "Mozambique", code: "MZ", phone_code: "+258" },
+    { name: "Namibia", code: "NA", phone_code: "+264" },
+    { name: "Seychelles", code: "SC", phone_code: "+248" },
+    { name: "South Africa", code: "ZA", phone_code: "+27" },
+    { name: "Tanzania", code: "TZ", phone_code: "+255" },
+    { name: "Zambia", code: "ZM", phone_code: "+260" },
+    { name: "Zimbabwe", code: "ZW", phone_code: "+263" },
+  ]);
 
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    if (name === "" || name === null) {
+    // Validate required fields
+    if (!name) {
       toast.warning("Name Required");
       return;
     }
 
-    if (email === "" || email === null) {
+    if (!email) {
       toast.warning("Email Required");
       return;
     }
 
-    if (password === "") {
+    if (!country) {
+      toast.warning("Country Required");
+      return;
+    }
+
+    if (!contact) {
+      toast.warning("Contact Needed");
+      return;
+    }
+
+    if (!password) {
       toast.warning("Password Required");
       return;
     }
 
-    if (confirmPassword === "") {
+    if (!confirmPassword) {
       toast.warning("Confirm Password Required");
       return;
     }
@@ -45,31 +80,65 @@ export default function Register() {
       return;
     }
 
-    const userType = localStorage.getItem("userType");
-    console.log(userType);
-
-    setIsloading(true);
-    const response = await register({
-      name: name,
-      email: email,
-      user: userType,
-      password: password,
-    }).catch((err) => {
-      setIsloading(false);
-    });
-    setIsloading(false);
-    console.log(response);
-    //New user created succesfully
-    if (response.status_code === 201) {
-      toast.success("You have registered succesfully");
-      setTimeout(() => {
-        navigate("/login");
-      }, 3000);
+    // Validate contact length
+    if (contact.length < 6 || contact.length > 14) {
+      toast.warning("Contact number should be 6-14 digits");
+      return;
     }
 
-    // user already exists
-    if (response.status_code === 400) toast.warning(response.message);
-    return;
+    // Get selected country
+    const selectedCountry = countries.find((c) => c.name === country);
+    if (!selectedCountry) {
+      toast.warning("Invalid country selected");
+      return;
+    }
+
+    // Prepend country code to contact number
+    const fullContact = selectedCountry.phone_code + contact;
+
+    // Validate phone number format
+    const phoneRegex = /^\+\d{1,4}\d{6,14}$/;
+    if (!phoneRegex.test(fullContact)) {
+      toast.warning("Invalid phone number format");
+      return;
+    }
+
+    // Get user type from localStorage
+    const userType = localStorage.getItem("userType");
+    if (!userType) {
+      toast.warning("User type not selected");
+      return;
+    }
+
+    setIsloading(true);
+
+    try {
+      const response = await register({
+        name: name,
+        email: email,
+        user: userType,
+        password: password,
+        contact: fullContact,
+        country: country,
+      });
+
+      // Handle response
+      if (response.status_code === 201) {
+        toast.success("Registration successful! Redirecting to login...");
+        setTimeout(() => navigate("/login"), 2000);
+      } else if (response.status_code === 400) {
+        toast.warning(response.message);
+      } else {
+        toast.error(
+          "Unexpected response: " + (response.message || "Please try again"),
+        );
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error("Registration failed: " + (error.message || "Network error"));
+    } finally {
+      setIsloading(false);
+    }
   };
 
   const isValidEmail = (email) => {
@@ -95,10 +164,13 @@ export default function Register() {
             Create Account
           </h1>
           <p className="text-center text-gray-500 mb-8">
-            Join <span className="font-semibold"><span className="p-1 text-2xl font-bold border-b text-red-500">
-          HireAI
-        </span></span>and get
-            started today!
+            Join{" "}
+            <span className="font-semibold">
+              <span className="p-1 text-2xl font-bold border-b text-red-500">
+                HireAI
+              </span>
+            </span>
+            and get started today!
           </p>
 
           <div className="space-y-6">
@@ -124,6 +196,50 @@ export default function Register() {
                 className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder=""
               />
+            </div>
+            {/* Countries */}
+            <div>
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Country <span className="text-red-400">*</span>
+                </label>
+                <select
+                  className="w-full border rounded-lg px-3 py-2"
+                  onChange={(e) => setCountry(e.target.value)}
+                >
+                  {countries.map((country) => {
+                    return (
+                      <option key={country.name} value={country.name}>
+                        {country.name} ( {country.phone_code} )
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+            </div>
+
+            {/* Contact Number */}
+
+            {/* Contact Number */}
+            <div>
+              <label className="block mb-1 font-medium">Contact</label>
+              <div className="flex">
+                <span className="inline-flex items-center px-3 border border-r-0 rounded-l-lg bg-gray-50 text-gray-500">
+                  {countries.find((c) => c.name === country)?.phone_code}
+                </span>
+                <input
+                  type="tel"
+                  value={contact}
+                  onChange={(e) =>
+                    setContact(e.target.value.replace(/\D/g, ""))
+                  }
+                  className="w-full border rounded-r-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="12345678"
+                />
+              </div>
             </div>
 
             {/* Password */}

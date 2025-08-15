@@ -63,17 +63,17 @@ const ClientHome = () => {
         </p>
       </section>
 
-      <section id="contact" className="px-6 py-16 bg-white text-center">
-        <span
+      <section id="contact" className=" py-16 bg-white text-center">
+        <button
           onClick={loginUser}
-          className="cursor-pointer inline-block text-blue-600 text-5xl font-medium hover:text-gray-400 transition underline"
+          className="px-8 border-r rounded-full  cursor-pointer bg-blue-500 hover:bg-blue-800 p-2 inline-block text-white text-lg font-medium"
         >
           Get Started
-        </span>
+        </button>
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="px-6 py-16 bg-white text-center">
+      <section id="contact" className="px-6 py-4 bg-white text-center mb-10">
         <h3 className="text-3xl font-bold mb-6">Get in Touch</h3>
         <p className="mb-4">Have questions or need a demo?</p>
         <Link
@@ -92,13 +92,6 @@ const ClientHome = () => {
   );
 };
 
-function FeatureCard({ title, description }) {
-  return (
-    <div className="p-6 rounded-2xl shadow hover:shadow-lg transition bg-gray-50">
-      <h4 className="text-xl font-semibold mb-2">{title}</h4>
-      <p>{description}</p>
-    </div>
-  );
-}
+
 
 export default ClientHome;

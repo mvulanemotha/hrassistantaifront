@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import chargeServise from "../services/chargeService";
 
 const templates = [
   { name: "ATS basic HR resume" },
@@ -21,7 +22,7 @@ const GenerateCv = () => {
 
   const paginatedTemplates = templates.slice(
     page * itemsPerPage,
-    page * itemsPerPage + itemsPerPage
+    page * itemsPerPage + itemsPerPage,
   );
 
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -51,13 +52,13 @@ const GenerateCv = () => {
       const docxBlob = await templateResponse.blob();
 
       const templateFile = new File([docxBlob], `${cvName}.docx`, {
-        type:
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       });
 
       const formData = new FormData();
       formData.append("user_cv", selectedFile);
       formData.append("template_file", templateFile);
+      formData.append("required_units", chargeServise("generate_cv"));
 
       const res = await fetch(`${apiUrl}generate_cv`, {
         method: "POST",
@@ -74,7 +75,7 @@ const GenerateCv = () => {
       // Convert base64 PDF to Blob URL
       const pdfBlob = new Blob(
         [Uint8Array.from(atob(data.pdf), (c) => c.charCodeAt(0))],
-        { type: "application/pdf" }
+        { type: "application/pdf" },
       );
       const pdfUrl = window.URL.createObjectURL(pdfBlob);
 
@@ -82,9 +83,8 @@ const GenerateCv = () => {
       const docxBlob2 = new Blob(
         [Uint8Array.from(atob(data.docx), (c) => c.charCodeAt(0))],
         {
-          type:
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        }
+          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        },
       );
       const docxUrl = window.URL.createObjectURL(docxBlob2);
 
@@ -113,7 +113,9 @@ const GenerateCv = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center">Select a CV Template</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">
+        Select a CV Template
+      </h2>
 
       <div className="flex justify-between items-center mb-4">
         <button
@@ -175,7 +177,9 @@ const GenerateCv = () => {
 
       {/* Upload Section */}
       <div className="mt-10 border-t pt-6">
-        <h3 className="text-xl font-semibold mb-4 text-center">Upload Your CV</h3>
+        <h3 className="text-xl font-semibold mb-4 text-center">
+          Upload Your CV
+        </h3>
         <div className="flex flex-col sm:flex-row items-center gap-4 justify-center">
           <input
             type="file"
@@ -191,7 +195,9 @@ const GenerateCv = () => {
           </button>
         </div>
         {uploadStatus && (
-          <p className="mt-3 text-center text-sm text-gray-600">{uploadStatus}</p>
+          <p className="mt-3 text-center text-sm text-gray-600">
+            {uploadStatus}
+          </p>
         )}
 
         {/* PDF Preview & Download */}

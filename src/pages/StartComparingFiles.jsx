@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Header from "../components/Header";
+import chargeServise from "../services/chargeService";
 
 const StartComparingFiles = () => {
   // State for text inputs
@@ -44,13 +45,12 @@ const StartComparingFiles = () => {
         params: {
           job_description: jobDescriptionText,
           cv_text: cvText,
+          user_id: localStorage.getItem("user_id"),
+          required_units: chargeServise("compare_text"),
         },
       });
-      setScoreText(
-        "Your Match Score Is: " +
-          (parseFloat(res.data.score).toFixed(2) * 100).toFixed(2) +
-          " %",
-      );
+
+      setScoreText((parseFloat(res.data.score).toFixed(2) * 100).toFixed(2));
     } catch (err) {
       console.log(err);
     } finally {
@@ -77,6 +77,7 @@ const StartComparingFiles = () => {
     const formData = new FormData();
     formData.append("job_description_file", jobDescriptionFile);
     formData.append("cv_file", cvFile);
+    formData.append("required_units", chargeServise("compare_files"));
 
     try {
       const res = await axios.post(
@@ -89,11 +90,7 @@ const StartComparingFiles = () => {
         },
       );
 
-      setScoreFile(
-        "Your Match Score Is: " +
-          (parseFloat(res.data.score).toFixed(2) * 100).toFixed(2) +
-          " %",
-      );
+      setScoreFile((parseFloat(res.data.score).toFixed(2) * 100).toFixed(2));
     } catch (err) {
       console.log(err);
       toast.error("Failed to compare files.");
@@ -116,6 +113,7 @@ const StartComparingFiles = () => {
     const formData = new FormData();
     formData.append("job_description_file", jobDescriptionFile);
     formData.append("cv_file", cvFile);
+    formData.append("required_units", chargeServise("get_file_reasoning"));
 
     try {
       const res = await axios.post(`${apiUrl}low_score_explanation`, formData, {
@@ -127,6 +125,35 @@ const StartComparingFiles = () => {
       setExplanationError(
         error.response?.data?.error || "Failed to fetch explanation.",
       );
+    } finally {
+      setLoadingExplanation(false);
+    }
+  };
+
+  // get explanation for job descrption and cv text
+  const getExplanation_for_low_score = async () => {
+    try {
+      setLoadingExplanation(true);
+      setExplanationError(null);
+      setExplanation("");
+
+      await axios
+        .post(`${apiUrl}explain_low_score_in_text`, {
+          job_description: jobDescriptionText,
+          cv_text: cvText,
+          required_units: chargeServise("get_text_reasoning"),
+        })
+        .then((data) => {
+          console.log(data);
+          setExplanation(data.data.explanation || "No explanation returned.");
+        })
+        .catch((err) => {
+          setExplanationError(
+            err.response?.data?.error || "Failed to fetch explanation.",
+          );
+        });
+    } catch (err) {
+      console.log(err);
     } finally {
       setLoadingExplanation(false);
     }
@@ -157,7 +184,10 @@ const StartComparingFiles = () => {
         <span>
           {" "}
           <button
-            onClick={() => setSelectedButton("usetext")}
+            onClick={() => {
+              setSelectedButton("usetext");
+              setExplanation("");
+            }}
             className={`cursor-pointer bg-blue-500 p-1 px-8 text-white rounded-full ${selectedButton === "usetext" ? "border-2 border-red-500" : ""}`}
           >
             Use Text
@@ -166,10 +196,13 @@ const StartComparingFiles = () => {
         <span>
           {" "}
           <button
-            onClick={() => setSelectedButton("usefile")}
+            onClick={() => {
+              setSelectedButton("usefile");
+              setExplanation("");
+            }}
             className={`cursor-pointer bg-blue-500 p-1 px-8 text-white rounded-full ${selectedButton === "usefile" ? "border-2 border-red-500" : ""}`}
           >
-            Use File{" "}
+            Use Files{" "}
           </button>{" "}
         </span>
       </div>
@@ -193,7 +226,9 @@ const StartComparingFiles = () => {
           {/* Text Inputs */}
           {selectedButton === "usetext" && (
             <div className="bg-white rounded-2xl shadow p-6">
-              <label className="block mb-2 font-medium">Job Description</label>
+              <label className="block mb-2 font-medium">
+                Job Description Text
+              </label>
               <textarea
                 rows="6"
                 className="w-full border rounded-xl p-3 mb-6 focus:ring focus:outline-none"
@@ -201,7 +236,9 @@ const StartComparingFiles = () => {
                 value={jobDescriptionText}
                 onChange={(e) => setJobDescriptionText(e.target.value)}
               />
-              <label className="block mb-2 font-medium">Candidate CV</label>
+              <label className="block mb-2 font-medium">
+                Candidate CV Text
+              </label>
               <textarea
                 rows="6"
                 className="w-full border rounded-xl p-3 focus:ring focus:outline-none"
@@ -219,6 +256,30 @@ const StartComparingFiles = () => {
               <span className="pl-4 text-red-500 font-bold underline">
                 {scoreText}
               </span>
+
+              {/* want to display a button when there is a score  */}
+
+              {scoreText && (
+                <div>
+                  <button
+                    onClick={getExplanation_for_low_score}
+                    disabled={loadingExplanation}
+                    className="ml-1 mt-4 bg-blue-300 hover:bg-yellow-600  py-1 px-6 rounded-lg"
+                  >
+                    {loadingExplanation
+                      ? "Loading explanation..."
+                      : "Explain Score"}
+                  </button>
+
+                  {/* Show explanation */}
+                  {explanation && (
+                    <div className="mt-4 p-3 bg-yellow-100 border border-yellow-400 rounded text-yellow-800 whitespace-pre-wrap">
+                      <strong>Explanation:</strong>
+                      <p>{explanation}</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
           {/* File Uploads */}
