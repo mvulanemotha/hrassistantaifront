@@ -165,18 +165,9 @@ const StartComparingFiles = () => {
       <Header />
 
       {/* Hero Section */}
-      <header className="text-center px-6 py-8 lg:py-8">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-4xl lg:text-5xl font-extrabold mb-6 text-gray-400"
-        >
-          Compare Your CV with a Job Advert
-        </motion.h2>
-      </header>
+     
       {/*  section to have clickable button */}
-      <div className="text-center p-8 bg-gray-200 rounded-lg gap-8">
+      <div className="text-center p-8 bg-gray-300 rounded-lg gap-8">
         <p className="text-lg lg:text-xl max-w-2xl mx-auto mb-8">
           Upload your CV and a job advert to instantly see how well you align —
           all powered by smart AI insights.
@@ -188,7 +179,7 @@ const StartComparingFiles = () => {
               setSelectedButton("usetext");
               setExplanation("");
             }}
-            className={`cursor-pointer bg-blue-500 p-1 px-8 text-white rounded-full ${selectedButton === "usetext" ? "border-2 border-red-500" : ""}`}
+            className={`cursor-pointer bg-blue-500 p-1 px-12 py-2 text-white rounded-full ${selectedButton === "usetext" ? "border-2 border-red-500" : ""}`}
           >
             Use Text
           </button>
@@ -200,7 +191,7 @@ const StartComparingFiles = () => {
               setSelectedButton("usefile");
               setExplanation("");
             }}
-            className={`cursor-pointer bg-blue-500 p-1 px-8 text-white rounded-full ${selectedButton === "usefile" ? "border-2 border-red-500" : ""}`}
+            className={`cursor-pointer bg-blue-500 p-1 px-12 py-2 text-white rounded-full ${selectedButton === "usefile" ? "border-2 border-red-500" : ""}`}
           >
             Use Files{" "}
           </button>{" "}
@@ -211,13 +202,13 @@ const StartComparingFiles = () => {
       <section className="px-6 py-12 bg-gray-100">
         <h3 className="text-3xl font-bold text-center mb-8">
           {selectedButton === "usetext" && (
-            <span className=" text-2xl font-semibold mb-8 text-green-500">
+            <span className=" text-2xl font-bold mb-8 text-gray-700">
               Paste & Compare
             </span>
           )}
 
           {selectedButton === "usefile" && (
-            <span className=" text-2xl font-semibold mb-8 text-green-500">
+            <span className=" text-2xl font-bold mb-8 text-gray-700">
               Upload Files & Compare
             </span>
           )}
@@ -285,20 +276,36 @@ const StartComparingFiles = () => {
           {/* File Uploads */}
           {selectedButton === "usefile" && (
             <div className="bg-white rounded-2xl shadow p-6">
-              <label className="block mb-2 font-medium">Job Advert</label>
-              <input
-                type="file"
-                accept=".pdf,.docx,.txt,.doc"
-                className="w-full mb-6 border rounded-xl p-2"
-                onChange={(e) => setJobDescriptionFile(e.target.files[0])}
-              />
-              <label className="block mb-2 font-medium">Your CV</label>
-              <input
-                type="file"
-                accept=".pdf,.docx,.txt,.doc"
-                className="w-full border rounded-xl p-2"
-                onChange={(e) => setCvFile(e.target.files[0])}
-              />
+              <div className="space-y-4">
+                <div>
+                  <label className="block mb-2 text-gray-700 font-semibold">
+                    Job Advert
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf,.docx,.txt,.doc"
+                    onChange={(e) => setJobDescriptionFile(e.target.files[0])}
+                    className="w-full border border-gray-300 rounded-xl p-3 
+                 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 
+                 transition duration-200 shadow-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block mb-2 text-gray-700 font-semibold">
+                    Your CV
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf,.docx,.txt,.doc"
+                    onChange={(e) => setCvFile(e.target.files[0])}
+                    className="w-full border border-gray-300 rounded-xl p-3 
+                 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 
+                 transition duration-200 shadow-sm"
+                  />
+                </div>
+              </div>
+
               <button
                 onClick={handleCompareFile}
                 className="mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-xl font-medium"
@@ -341,16 +348,6 @@ const StartComparingFiles = () => {
             </div>
           )}
         </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="px-6 py-16 bg-white text-center">
-        <p className="text-3xl font-bold mb-6 text-gray-600">
-          Have any questions, contact us{" "}
-          <span className="text-blue-600 font-semibold cursor-pointer">
-            <Link to="/contact">now! </Link>{" "}
-          </span>
-        </p>
       </section>
 
       {/* Footer */}
