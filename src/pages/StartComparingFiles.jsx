@@ -78,6 +78,7 @@ const StartComparingFiles = () => {
     formData.append("job_description_file", jobDescriptionFile);
     formData.append("cv_file", cvFile);
     formData.append("required_units", chargeServise("compare_files"));
+    formData.append("user_id" , localStorage.getItem("user_id"))
 
     try {
       const res = await axios.post(
@@ -114,6 +115,7 @@ const StartComparingFiles = () => {
     formData.append("job_description_file", jobDescriptionFile);
     formData.append("cv_file", cvFile);
     formData.append("required_units", chargeServise("get_file_reasoning"));
+    formData.append("user_id", localStorage.getItem("user_id"))
 
     try {
       const res = await axios.post(`${apiUrl}low_score_explanation`, formData, {
@@ -137,11 +139,17 @@ const StartComparingFiles = () => {
       setExplanationError(null);
       setExplanation("");
 
+      console.log(Number(chargeServise("get_text_reasoning")))
+      console.log(jobDescriptionText)
+      console.log(cvText)
+
+
       await axios
         .post(`${apiUrl}explain_low_score_in_text`, {
           job_description: jobDescriptionText,
           cv_text: cvText,
-          required_units: chargeServise("get_text_reasoning"),
+          user_id: localStorage.getItem("user_id"),
+          required_units: Number(chargeServise("get_text_reasoning")),
         })
         .then((data) => {
           console.log(data);

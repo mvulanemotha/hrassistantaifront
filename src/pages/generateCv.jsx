@@ -59,6 +59,7 @@ const GenerateCv = () => {
       formData.append("user_cv", selectedFile);
       formData.append("template_file", templateFile);
       formData.append("required_units", chargeServise("generate_cv"));
+      formData.append("user_id", localStorage.getItem("user_id"))
 
       const res = await fetch(`${apiUrl}generate_cv`, {
         method: "POST",
