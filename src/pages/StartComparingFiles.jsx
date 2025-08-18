@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Header from "../components/Header";
@@ -23,7 +23,7 @@ const StartComparingFiles = () => {
   const [explanation, setExplanation] = useState("");
   const [loadingExplanation, setLoadingExplanation] = useState(false);
   const [explanationError, setExplanationError] = useState(null);
-
+  const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
 
   // Handler for text comparison
@@ -78,7 +78,7 @@ const StartComparingFiles = () => {
     formData.append("job_description_file", jobDescriptionFile);
     formData.append("cv_file", cvFile);
     formData.append("required_units", chargeServise("compare_files"));
-    formData.append("user_id" , localStorage.getItem("user_id"))
+    formData.append("user_id", localStorage.getItem("user_id"));
 
     try {
       const res = await axios.post(
@@ -115,14 +115,15 @@ const StartComparingFiles = () => {
     formData.append("job_description_file", jobDescriptionFile);
     formData.append("cv_file", cvFile);
     formData.append("required_units", chargeServise("get_file_reasoning"));
-    formData.append("user_id", localStorage.getItem("user_id"))
+    formData.append("user_id", localStorage.getItem("user_id"));
 
     try {
       const res = await axios.post(`${apiUrl}low_score_explanation`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setExplanation(res.data.explanation || "No explanation returned.");
+      localStorage.setItem("lowscoreexplanation", res.data.explanation);
+      navigate("/lowscoreresult");
     } catch (error) {
       setExplanationError(
         error.response?.data?.error || "Failed to fetch explanation.",
@@ -139,11 +140,6 @@ const StartComparingFiles = () => {
       setExplanationError(null);
       setExplanation("");
 
-      console.log(Number(chargeServise("get_text_reasoning")))
-      console.log(jobDescriptionText)
-      console.log(cvText)
-
-
       await axios
         .post(`${apiUrl}explain_low_score_in_text`, {
           job_description: jobDescriptionText,
@@ -152,8 +148,8 @@ const StartComparingFiles = () => {
           required_units: Number(chargeServise("get_text_reasoning")),
         })
         .then((data) => {
-          console.log(data);
-          setExplanation(data.data.explanation || "No explanation returned.");
+          localStorage.setItem("lowscoreexplanation", data.data.explanation);
+          navigate("/lowscoreresult");
         })
         .catch((err) => {
           setExplanationError(
@@ -173,10 +169,10 @@ const StartComparingFiles = () => {
       <Header />
 
       {/* Hero Section */}
-     
+
       {/*  section to have clickable button */}
-      <div className="text-center p-8 bg-gray-300 rounded-lg gap-8">
-        <p className="text-lg lg:text-xl max-w-2xl mx-auto mb-8">
+      <div className="text-center p-8 bg-gray-100 rounded-lg gap-8">
+        <p className="text-lg lg:text-xl max-w-2xl mx-auto mb-4">
           Upload your CV and a job advert to instantly see how well you align —
           all powered by smart AI insights.
         </p>
@@ -187,7 +183,7 @@ const StartComparingFiles = () => {
               setSelectedButton("usetext");
               setExplanation("");
             }}
-            className={`cursor-pointer bg-blue-500 p-1 px-12 py-2 text-white rounded-full ${selectedButton === "usetext" ? "border-2 border-red-500" : ""}`}
+            className={` text-gray-800 cursor-pointer bg-blue-300 p-1 px-12 py-2 rounded-full ${selectedButton === "usetext" ? "border-2 border-red-500" : ""}`}
           >
             Use Text
           </button>
@@ -199,7 +195,7 @@ const StartComparingFiles = () => {
               setSelectedButton("usefile");
               setExplanation("");
             }}
-            className={`cursor-pointer bg-blue-500 p-1 px-12 py-2 text-white rounded-full ${selectedButton === "usefile" ? "border-2 border-red-500" : ""}`}
+            className={`cursor-pointer bg-blue-300 p-1 px-12 py-2 text-gray-800 rounded-full ${selectedButton === "usefile" ? "border-2 border-red-500" : ""}`}
           >
             Use Files{" "}
           </button>{" "}
@@ -207,8 +203,8 @@ const StartComparingFiles = () => {
       </div>
 
       {/* Upload & Input Section */}
-      <section className="px-6 py-12 bg-gray-100">
-        <h3 className="text-3xl font-bold text-center mb-8">
+      <section className="px-6 py-2 bg-gray-100">
+        <h3 className="text-3xl font-bold text-center mb-2">
           {selectedButton === "usetext" && (
             <span className=" text-2xl font-bold mb-8 text-gray-700">
               Paste & Compare
@@ -229,7 +225,7 @@ const StartComparingFiles = () => {
                 Job Description Text
               </label>
               <textarea
-                rows="6"
+                rows="4"
                 className="w-full border rounded-xl p-3 mb-6 focus:ring focus:outline-none"
                 placeholder="Paste the job description here..."
                 value={jobDescriptionText}
@@ -239,7 +235,7 @@ const StartComparingFiles = () => {
                 Candidate CV Text
               </label>
               <textarea
-                rows="6"
+                rows="4"
                 className="w-full border rounded-xl p-3 focus:ring focus:outline-none"
                 placeholder="Paste the CV text here..."
                 value={cvText}
@@ -250,7 +246,7 @@ const StartComparingFiles = () => {
                 onClick={handleCompareText}
                 disabled={loading}
               >
-                Start Comparing
+                { loading ? "Comparing ..." : "Start Comparing" }
               </button>
               <span className="pl-4 text-red-500 font-bold underline">
                 {scoreText}
@@ -269,14 +265,6 @@ const StartComparingFiles = () => {
                       ? "Loading explanation..."
                       : "Explain Score"}
                   </button>
-
-                  {/* Show explanation */}
-                  {explanation && (
-                    <div className="mt-4 p-3 bg-yellow-100 border border-yellow-400 rounded text-yellow-800 whitespace-pre-wrap">
-                      <strong>Explanation:</strong>
-                      <p>{explanation}</p>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
@@ -338,15 +326,6 @@ const StartComparingFiles = () => {
                       : "Why is my score low?"}
                   </button>
                 )}
-
-              {/* Show explanation */}
-              {explanation && (
-                <div className="mt-4 p-3 bg-yellow-100 border border-yellow-400 rounded text-yellow-800 whitespace-pre-wrap">
-                  <strong>Explanation:</strong>
-                  <p>{explanation}</p>
-                </div>
-              )}
-
               {/* Show explanation error */}
               {explanationError && (
                 <div className="mt-4 p-3 bg-red-100 border border-red-400 rounded text-red-800">

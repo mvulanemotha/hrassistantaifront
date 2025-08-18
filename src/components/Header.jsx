@@ -6,7 +6,6 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user_id");
-    toast.success("Logged out successfully.");
     navigate("/login");
   };
 
@@ -28,7 +27,7 @@ const Header = () => {
           <span className="text-red-300 font-mono">
             {" "}
             Credits:{" "}
-            <span className="text-green-600 font-bold underline">
+            <span className="rounded-lg text-gray-500 font-extrabold">
               {" "}
               {localStorage.getItem("credits")}
             </span>
