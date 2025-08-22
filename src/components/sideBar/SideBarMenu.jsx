@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaUserAlt, FaBars, FaCloudDownloadAlt } from "react-icons/fa";
+import { FaBars, FaCloudDownloadAlt } from "react-icons/fa";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
 import { GrCompare ,GrSearchAdvanced } from "react-icons/gr";
@@ -7,7 +7,7 @@ import { ImHistory } from "react-icons/im";
 import { BsCreditCard2Back } from "react-icons/bs";
 import { CiSettings } from "react-icons/ci";
 import { FcDataSheet } from "react-icons/fc";
-import { toast } from "react-toastify";
+
 
 const SidebarMenu = ({ isOpen, setIsOpen }) => {
   const handleLinkClick = () => {
@@ -24,7 +24,6 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
   const handleLogout = () => {
     localStorage.removeItem("user_id");
     localStorage.removeItem("user_type");
-    toast.success("Logged out successfully.");
     navigate("/login");
   };
 
@@ -32,7 +31,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
     <>
       {/* Mobile menu toggle */}
       <button
-        className="md:hidden p-4 text-2xl z-50 fixed top-2 left-2 bg-white border rounded shadow"
+        className="md:hidden p-2 text-2xl z-50 fixed top-2 left-2 bg-white border rounded shadow"
         onClick={() => setIsOpen(!isOpen)}
       >
         <FaBars />
@@ -118,7 +117,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 <GrCompare className="h-6 w-12" />
                 Compare CV
               </NavLink>
-              <NavLink
+             {/* <NavLink
                 to="/generatecv"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
@@ -129,7 +128,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
               >
                 <FaCloudDownloadAlt className="h-6 w-12 text-gray-500" />
                 Generate CV
-              </NavLink>
+              </NavLink>   */}
               <NavLink
                 to="/addunits"
                 onClick={handleLinkClick}

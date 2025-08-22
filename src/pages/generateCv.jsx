@@ -22,7 +22,7 @@ const GenerateCv = () => {
 
   const paginatedTemplates = templates.slice(
     page * itemsPerPage,
-    page * itemsPerPage + itemsPerPage,
+    page * itemsPerPage + itemsPerPage
   );
 
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -42,6 +42,7 @@ const GenerateCv = () => {
     }
 
     try {
+      console.log(cvName)
       const templatePath = `cv_templates/word/${cvName}.docx`;
       const templateResponse = await fetch(templatePath);
 
@@ -49,8 +50,8 @@ const GenerateCv = () => {
         setUploadStatus("Failed to load template word.");
         return;
       }
-      const docxBlob = await templateResponse.blob();
 
+      const docxBlob = await templateResponse.blob();
       const templateFile = new File([docxBlob], `${cvName}.docx`, {
         type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       });
@@ -59,7 +60,7 @@ const GenerateCv = () => {
       formData.append("user_cv", selectedFile);
       formData.append("template_file", templateFile);
       formData.append("required_units", chargeServise("generate_cv"));
-      formData.append("user_id", localStorage.getItem("user_id"))
+      formData.append("user_id", localStorage.getItem("user_id"));
 
       const res = await fetch(`${apiUrl}generate_cv`, {
         method: "POST",
@@ -70,29 +71,18 @@ const GenerateCv = () => {
         throw new Error("Upload failed");
       }
 
-      // Backend returns JSON with base64 encoded 'pdf' and 'docx'
       const data = await res.json();
-
-      // Convert base64 PDF to Blob URL
-      const pdfBlob = new Blob(
-        [Uint8Array.from(atob(data.pdf), (c) => c.charCodeAt(0))],
-        { type: "application/pdf" },
-      );
-      const pdfUrl = window.URL.createObjectURL(pdfBlob);
 
       // Convert base64 DOCX to Blob URL
       const docxBlob2 = new Blob(
         [Uint8Array.from(atob(data.docx), (c) => c.charCodeAt(0))],
         {
           type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        },
+        }
       );
       const docxUrl = window.URL.createObjectURL(docxBlob2);
 
-      // Set URLs for preview and download
-      setGeneratedPdfUrl(pdfUrl);
       setGeneratedDocxUrl(docxUrl);
-
       setUploadStatus("Upload successful! ✅");
     } catch (err) {
       console.error(err);
@@ -100,23 +90,16 @@ const GenerateCv = () => {
     }
   };
 
-  // Clean up blob URLs on unmount or update to avoid memory leaks
+  // Clean up blob URLs
   useEffect(() => {
     return () => {
-      if (generatedPdfUrl) {
-        window.URL.revokeObjectURL(generatedPdfUrl);
-      }
-      if (generatedDocxUrl) {
-        window.URL.revokeObjectURL(generatedDocxUrl);
-      }
+      if (generatedDocxUrl) window.URL.revokeObjectURL(generatedDocxUrl);
     };
-  }, [generatedPdfUrl, generatedDocxUrl]);
+  }, [generatedDocxUrl]);
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center">
-        Select a CV Template
-      </h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Select a CV Template</h2>
 
       <div className="flex justify-between items-center mb-4">
         <button
@@ -126,11 +109,9 @@ const GenerateCv = () => {
         >
           ◀ Previous
         </button>
-
         <span className="text-gray-700">
           Page {page + 1} of {totalPages}
         </span>
-
         <button
           onClick={() => setPage((prev) => Math.min(prev + 1, totalPages - 1))}
           disabled={page === totalPages - 1}
@@ -140,7 +121,8 @@ const GenerateCv = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      {/* Templates: horizontal scroll on small screens, grid on larger screens */}
+      <div className="sm:grid sm:grid-cols-3 sm:gap-6 overflow-x-auto flex gap-4 pb-4 snap-x snap-mandatory">
         {paginatedTemplates.map((tpl) => {
           const imagePath = `cv_templates/img/${tpl.name}.png`;
           const isSelected = selectedImage === imagePath;
@@ -148,7 +130,7 @@ const GenerateCv = () => {
           return (
             <div
               key={tpl.name}
-              className={`cursor-pointer border rounded-lg overflow-hidden hover:shadow-lg transition ${
+              className={`cursor-pointer border rounded-lg overflow-hidden hover:shadow-lg transition flex-shrink-0 w-64 snap-center ${
                 isSelected ? "border-blue-500 shadow-lg" : "border-gray-300"
               }`}
               onClick={() => {
@@ -167,20 +149,17 @@ const GenerateCv = () => {
         })}
       </div>
 
-      <div className="mt-6 font-mono">
+      <div className="mt-6 font-mono text-center">
         {cvName && (
           <span className="text-xs">
-            You have selected this{" "}
-            <span className="underline font-bold">{cvName}</span>
+            You have selected <span className="underline font-bold">{cvName}</span>
           </span>
         )}
       </div>
 
       {/* Upload Section */}
       <div className="mt-10 border-t pt-6">
-        <h3 className="text-xl font-semibold mb-4 text-center">
-          Upload Your CV
-        </h3>
+        <h3 className="text-xl font-semibold mb-4 text-center">Upload Your CV</h3>
         <div className="flex flex-col sm:flex-row items-center gap-4 justify-center">
           <input
             type="file"
@@ -196,37 +175,10 @@ const GenerateCv = () => {
           </button>
         </div>
         {uploadStatus && (
-          <p className="mt-3 text-center text-sm text-gray-600">
-            {uploadStatus}
-          </p>
+          <p className="mt-3 text-center text-sm text-gray-600">{uploadStatus}</p>
         )}
 
-        {/* PDF Preview & Download */}
-        {generatedPdfUrl && (
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-2 text-center">
-              Generated CV PDF Preview
-            </h3>
-            <iframe
-              src={generatedPdfUrl}
-              title="Generated CV PDF Preview"
-              width="100%"
-              height="600px"
-              className="border"
-            />
-            <div className="text-center mt-2">
-              <a
-                href={generatedPdfUrl}
-                download={`${cvName}_generated_cv.pdf`}
-                className="inline-block mt-2 px-6 py-2 bg-green-600 text-white rounded-full hover:bg-green-700"
-              >
-                Download PDF
-              </a>
-            </div>
-          </div>
-        )}
-
-        {/* DOCX Download (no preview) */}
+        {/* DOCX Download */}
         {generatedDocxUrl && (
           <div className="mt-2 text-center">
             <a

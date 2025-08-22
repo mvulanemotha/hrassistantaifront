@@ -20,7 +20,7 @@ const StartComparingFiles = () => {
   const [cvFile, setCvFile] = useState(null);
 
   // State for explanation button
-  const [explanation, setExplanation] = useState("");
+  
   const [loadingExplanation, setLoadingExplanation] = useState(false);
   const [explanationError, setExplanationError] = useState(null);
   const navigate = useNavigate();
@@ -39,6 +39,8 @@ const StartComparingFiles = () => {
     }
 
     setLoading(true);
+  
+    console.log(localStorage.getItem("user_id"))
 
     try {
       const res = await axios.get(`${apiUrl}compare_text_cv_job_description`, {
@@ -71,7 +73,6 @@ const StartComparingFiles = () => {
     }
 
     setLoading(true);
-    setExplanation(""); // reset explanation on new compare
     setExplanationError(null);
 
     const formData = new FormData();
@@ -109,8 +110,7 @@ const StartComparingFiles = () => {
 
     setLoadingExplanation(true);
     setExplanationError(null);
-    setExplanation("");
-
+    
     const formData = new FormData();
     formData.append("job_description_file", jobDescriptionFile);
     formData.append("cv_file", cvFile);
@@ -125,9 +125,8 @@ const StartComparingFiles = () => {
       localStorage.setItem("lowscoreexplanation", res.data.explanation);
       navigate("/lowscoreresult");
     } catch (error) {
-      setExplanationError(
-        error.response?.data?.error || "Failed to fetch explanation.",
-      );
+      console.log(error)
+      setLoadingExplanation(false)
     } finally {
       setLoadingExplanation(false);
     }
@@ -138,7 +137,8 @@ const StartComparingFiles = () => {
     try {
       setLoadingExplanation(true);
       setExplanationError(null);
-      setExplanation("");
+      
+      console.log(localStorage.getItem("user_id"))
 
       await axios
         .post(`${apiUrl}explain_low_score_in_text`, {
@@ -173,17 +173,14 @@ const StartComparingFiles = () => {
       {/*  section to have clickable button */}
       <div className="text-center p-8 bg-gray-100 rounded-lg gap-8">
         <p className="text-lg lg:text-xl max-w-2xl mx-auto mb-4">
-          Upload your CV and a job advert to instantly see how well you align —
-          all powered by smart AI insights.
         </p>
         <span>
           {" "}
           <button
             onClick={() => {
               setSelectedButton("usetext");
-              setExplanation("");
             }}
-            className={` text-gray-800 cursor-pointer bg-blue-300 p-1 px-12 py-2 rounded-full ${selectedButton === "usetext" ? "border-2 border-red-500" : ""}`}
+            className={` text-gray-800 cursor-pointer bg-green-200 p-1 px-8 py-2 rounded-full ${selectedButton === "usetext" ? "border-2 border-red-500" : ""}`}
           >
             Use Text
           </button>
@@ -193,9 +190,8 @@ const StartComparingFiles = () => {
           <button
             onClick={() => {
               setSelectedButton("usefile");
-              setExplanation("");
             }}
-            className={`cursor-pointer bg-blue-300 p-1 px-12 py-2 text-gray-800 rounded-full ${selectedButton === "usefile" ? "border-2 border-red-500" : ""}`}
+            className={`cursor-pointer bg-green-200 p-1 px-8 py-2 text-gray-800 rounded-full ${selectedButton === "usefile" ? "border-2 border-red-500" : ""}`}
           >
             Use Files{" "}
           </button>{" "}
@@ -225,7 +221,7 @@ const StartComparingFiles = () => {
                 Job Description Text
               </label>
               <textarea
-                rows="4"
+                rows="3"
                 className="w-full border rounded-xl p-3 mb-6 focus:ring focus:outline-none"
                 placeholder="Paste the job description here..."
                 value={jobDescriptionText}
@@ -235,7 +231,7 @@ const StartComparingFiles = () => {
                 Candidate CV Text
               </label>
               <textarea
-                rows="4"
+                rows="3"
                 className="w-full border rounded-xl p-3 focus:ring focus:outline-none"
                 placeholder="Paste the CV text here..."
                 value={cvText}
@@ -307,7 +303,8 @@ const StartComparingFiles = () => {
                 className="mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-xl font-medium"
                 disabled={loading}
               >
-                Start Comparing
+                
+                { loading ? "Comparing your files ... " : "Start Comparing" }
               </button>
               <span className="pl-4 text-red-500 font-bold underline">
                 {scoreFile}

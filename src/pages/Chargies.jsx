@@ -21,13 +21,13 @@ const ChargeTable = () => {
 
         <div className="overflow-y-auto">
           <table className="min-w-full bg-gray-100 rounded-2xl shadow-md">
-            <thead>
+            <thead className="text-xs">
               <tr className="bg-blue-400 text-white">
                 <th className="text-left py-3 px-4">Description</th>
                 <th className="text-left py-3 px-4 rounded-tr-2xl">Units</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-xs">
               {Object.keys(chargies).map((key, index) => (
                 <tr
                   key={key}
