@@ -15,6 +15,7 @@ import AddUnits from "./pages/AddUnits";
 import Settings from "./pages/Settings";
 import Chargies from "./pages/Chargies";
 import LowScoreExplanation from "./pages/Explanation";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
         <Route path="lowscoreresult" element={<LowScoreExplanation />} />
       </Route>
       <Route path="comparecvs" element={<ClientHome />} />
+      <Route path="forgotpass" element={ <ForgotPassword/> } />
     </Routes>
   );
 }

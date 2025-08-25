@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Header from "../components/Header";
 import chargeServise from "../services/chargeService";
+import Footer from "../components/Footer";
 
 const StartComparingFiles = () => {
   // State for text inputs
@@ -173,6 +173,7 @@ const StartComparingFiles = () => {
       {/*  section to have clickable button */}
       <div className="text-center p-8 bg-gray-100 rounded-lg gap-8">
         <p className="text-lg lg:text-xl max-w-2xl mx-auto mb-4">
+        Start Comparing Your CV with Job Adverts
         </p>
         <span>
           {" "}
@@ -333,11 +334,6 @@ const StartComparingFiles = () => {
           )}
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="px-6 py-4 bg-gray-100 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} HRAssistant AI. All rights reserved.
-      </footer>
     </div>
   );
 };

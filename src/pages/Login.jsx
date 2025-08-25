@@ -35,7 +35,7 @@ export default function Login() {
       localStorage.setItem("user_token", response.access_token);
       localStorage.setItem("name", response.name);
       localStorage.setItem("userType", response.user);
-      localStorage.setItem("email", response.email)
+      localStorage.setItem("email", response.email);
 
       if (response) {
         getUserCredits();
@@ -53,7 +53,7 @@ export default function Login() {
       }
 
       if (response.status_code === 400) {
-        toast.warning(response.message);
+        toast.info("User not registered. Please sign up.");
         return;
       }
     } catch (error) {
@@ -67,6 +67,11 @@ export default function Login() {
   // get credits of a user
   const getUserCredits = async () => {
     try {
+
+      if (localStorage.getItem("user_id") !== undefined) return;
+
+      console.log(localStorage.getItem("user_id"))
+
       await axios
         .get(`${apiUrl}get_credits/${localStorage.getItem("user_id")}`)
         .then((res) => {
@@ -167,6 +172,9 @@ export default function Login() {
             <Link to="/register" className="text-blue-600 hover:underline">
               Sign up
             </Link>
+          </p>
+          <p className="text-center mt-4">
+            <Link to="/forgotpass" className="text-blue-600 hover:text-red-400">Forgot password</Link>
           </p>
         </motion.div>
       </div>

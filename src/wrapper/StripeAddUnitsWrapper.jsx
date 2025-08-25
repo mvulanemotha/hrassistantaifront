@@ -4,6 +4,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import AddUnits from "../pages/AddUnits";
 import Header from "../components/Header";
 
+
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const apiUrl = import.meta.env.VITE_API_URL;
 

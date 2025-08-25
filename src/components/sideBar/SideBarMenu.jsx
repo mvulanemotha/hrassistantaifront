@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaBars, FaCloudDownloadAlt } from "react-icons/fa";
+import { FaBars } from "react-icons/fa";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
 import { GrCompare ,GrSearchAdvanced } from "react-icons/gr";
