@@ -62,7 +62,7 @@ export default function Home() {
             </span>
             <span
               onClick={() => hangleLogin("USER")}
-              className="mt-2 text-red-800 underline text-lg font-medium cursor-pointer"
+              className="mt-2 text-red-800 underline text-lg font-medium cursor-pointer hover:text-green-500"
             >
               Compare Now
             </span>
@@ -75,7 +75,7 @@ export default function Home() {
             </span>
             <span
               onClick={() => hangleLogin("HR")}
-              className="mt-2 text-red-800 underline text-lg font-medium cursor-pointer"
+              className="mt-2 text-red-800 underline text-lg font-medium cursor-pointer hover:text-green-500"
             >
               HR Recruiter
             </span>
