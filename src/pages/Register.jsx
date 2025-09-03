@@ -110,6 +110,14 @@ export default function Register() {
       return;
     }
 
+    if (userType === undefined || userType === null || userType === "") {
+      navigate("/");
+      toast.warning("User type not selected");
+      return;
+    }
+
+    console.log(userType + "Testing");
+
     setIsloading(true);
 
     try {
