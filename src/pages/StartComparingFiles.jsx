@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Header from "../components/Header";
 import chargeServise from "../services/chargeService";
-import Footer from "../components/Footer";
+
 
 const StartComparingFiles = () => {
   // State for text inputs

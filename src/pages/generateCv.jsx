@@ -1,11 +1,24 @@
 import { useState, useEffect } from "react";
 import chargeServise from "../services/chargeService";
+import { toast } from "react-toastify";
 
 const templates = [
-  { name: "ATS basic HR resume" },
-  { name: "ATS classic HR resume" },
-  { name: "Attorney resume" },
-  { name: "Basic sales resume" },
+  { name: "1" },
+  { name: "2" },
+  { name: "3" },
+  { name: "4" },
+  { name: "5" },
+  { name: "6" },
+  { name: "7" },
+  { name: "8" },
+  { name: "9" },
+  { name: "10" },
+  { name: "11" },
+  { name: "12" },
+  { name: "13" },
+  { name: "14" },
+  { name: "15" },
+  { name: "16" },
 ];
 
 const GenerateCv = () => {
@@ -14,7 +27,6 @@ const GenerateCv = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState("");
   const [cvName, setCvName] = useState("");
-  const [generatedPdfUrl, setGeneratedPdfUrl] = useState(null);
   const [generatedDocxUrl, setGeneratedDocxUrl] = useState(null);
 
   const itemsPerPage = 3;
@@ -22,7 +34,7 @@ const GenerateCv = () => {
 
   const paginatedTemplates = templates.slice(
     page * itemsPerPage,
-    page * itemsPerPage + itemsPerPage
+    page * itemsPerPage + itemsPerPage,
   );
 
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -42,27 +54,12 @@ const GenerateCv = () => {
     }
 
     try {
-      console.log(cvName)
-      const templatePath = `cv_templates/word/${cvName}.docx`;
-      const templateResponse = await fetch(templatePath);
-
-      if (!templateResponse.ok) {
-        setUploadStatus("Failed to load template word.");
-        return;
-      }
-
-      const docxBlob = await templateResponse.blob();
-      const templateFile = new File([docxBlob], `${cvName}.docx`, {
-        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      });
-
       const formData = new FormData();
       formData.append("user_cv", selectedFile);
-      formData.append("template_file", templateFile);
-      formData.append("required_units", chargeServise("generate_cv"));
+      formData.append("template_file", cvName); //selected file number
       formData.append("user_id", localStorage.getItem("user_id"));
 
-      const res = await fetch(`${apiUrl}generate_cv`, {
+      const res = await fetch(`${apiUrl}save_cv_to_process`, {
         method: "POST",
         body: formData,
       });
@@ -72,21 +69,17 @@ const GenerateCv = () => {
       }
 
       const data = await res.json();
+      console.log(data);
 
-      // Convert base64 DOCX to Blob URL
-      const docxBlob2 = new Blob(
-        [Uint8Array.from(atob(data.docx), (c) => c.charCodeAt(0))],
-        {
-          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        }
-      );
-      const docxUrl = window.URL.createObjectURL(docxBlob2);
+      if (data.status_code === 201) {
+        // Generate DOCX download link
+        toast.success("CV uploaded successfully!");
+      }
 
-      setGeneratedDocxUrl(docxUrl);
-      setUploadStatus("Upload successful! ✅");
+      setUploadStatus("Cv uploaded your cv will be sent to you ✅");
     } catch (err) {
-      console.error(err);
-      setUploadStatus("Upload failed ❌");
+      toast.warning("Upload failed ❌")
+      //setUploadStatus("Upload failed ❌");
     }
   };
 
@@ -99,7 +92,9 @@ const GenerateCv = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center">Select a CV Template</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">
+        Select a CV Template
+      </h2>
 
       <div className="flex justify-between items-center mb-4">
         <button
@@ -124,7 +119,7 @@ const GenerateCv = () => {
       {/* Templates: horizontal scroll on small screens, grid on larger screens */}
       <div className="sm:grid sm:grid-cols-3 sm:gap-6 overflow-x-auto flex gap-4 pb-4 snap-x snap-mandatory">
         {paginatedTemplates.map((tpl) => {
-          const imagePath = `cv_templates/img/${tpl.name}.png`;
+          const imagePath = `cv_templates/img/${tpl.name}.jpeg`;
           const isSelected = selectedImage === imagePath;
 
           return (
@@ -152,14 +147,17 @@ const GenerateCv = () => {
       <div className="mt-6 font-mono text-center">
         {cvName && (
           <span className="text-xs">
-            You have selected <span className="underline font-bold">{cvName}</span>
+            You have selected{" "}
+            <span className="underline font-bold">{cvName}</span>
           </span>
         )}
       </div>
 
       {/* Upload Section */}
       <div className="mt-10 border-t pt-6">
-        <h3 className="text-xl font-semibold mb-4 text-center">Upload Your CV</h3>
+        <h3 className="text-xl font-semibold mb-4 text-center">
+          Upload Your CV
+        </h3>
         <div className="flex flex-col sm:flex-row items-center gap-4 justify-center">
           <input
             type="file"
@@ -175,7 +173,9 @@ const GenerateCv = () => {
           </button>
         </div>
         {uploadStatus && (
-          <p className="mt-3 text-center text-sm text-gray-600">{uploadStatus}</p>
+          <p className="mt-3 text-center text-sm text-gray-600">
+            {uploadStatus}
+          </p>
         )}
 
         {/* DOCX Download */}

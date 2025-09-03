@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaBars } from "react-icons/fa";
+import { FaBars , FaCloudDownloadAlt } from "react-icons/fa";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
 import { GrCompare ,GrSearchAdvanced } from "react-icons/gr";
@@ -117,7 +117,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 <GrCompare className="h-6 w-12" />
                 Compare CV
               </NavLink>
-             {/* <NavLink
+              <NavLink
                 to="/generatecv"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
@@ -128,7 +128,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
               >
                 <FaCloudDownloadAlt className="h-6 w-12 text-gray-500" />
                 Generate CV
-              </NavLink>   */}
+              </NavLink> 
               <NavLink
                 to="/addunits"
                 onClick={handleLinkClick}
