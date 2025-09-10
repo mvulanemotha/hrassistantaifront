@@ -68,19 +68,23 @@ export default function Login() {
   const getUserCredits = async () => {
     try {
 
-      if (localStorage.getItem("user_id") !== undefined) return;
-
+      
+      if (localStorage.getItem("user_id") === undefined) return;
+      console.log("we have a user id");
       console.log(localStorage.getItem("user_id"))
 
       await axios
         .get(`${apiUrl}get_credits/${localStorage.getItem("user_id")}`)
         .then((res) => {
           const creditData = res.data;
-
+          console.log(res)
+          console.log(creditData); 
           const total = creditData.reduce((sum, item) => sum + item.amount, 0);
 
           console.log(total);
           localStorage.setItem("credits", total);
+        }).catch(resError=>{
+          console.log(resError)
         });
     } catch (err) {
       console.log(err);

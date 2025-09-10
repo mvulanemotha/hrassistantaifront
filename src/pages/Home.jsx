@@ -27,12 +27,13 @@ export default function Home() {
           <h3 className="text-3xl font-bold mb-6">
             About <span className="text-red-500">HireAI</span>{" "}
           </h3>
-          <p className="max-w-3xl mx-auto text-lg">
-            HireAI Assistant is built to empower users actively seeking employment
-            and HR teams with intelligent tools for recruitment and management.
-            Job seekers can compare their CVs with job adverts to see how well
-            they align, while HR teams can save time, reduce manual tasks, and
-            focus on what matters: finding the right talent.
+          <p className="max-w-3xl mx-auto text-lg font-medium text-gray-500">
+            HireAI is built to empower job seekers with intelligent
+            tools for career success. Users can upload their CVs and instantly
+            compare them with job adverts to see how well they align. This helps
+            identify strengths, gaps, and opportunities to tailor
+            applications—boosting their chances of landing interviews and job
+            offers.
           </p>
         </section>
 
@@ -41,18 +42,19 @@ export default function Home() {
           <div className="flex justify-center gap-12">
             {/* Job Seeker */}
             <div className="flex flex-col items-center">
-              <span className="text-center font-bold text-gray-500">
+              <span className="text-center text-lg font-bold text-green-600">
                 Looking for your next opportunity?
               </span>
-              <span
+              <button
                 onClick={() => hangleLogin("USER")}
-                className="mt-2 text-red-800 underline text-lg font-medium cursor-pointer hover:text-green-500"
+                className="mt-4 px-6 py-3 bg-gradient-to-r from-red-600 to-red-800 text-white text-lg font-semibold rounded-2xl shadow-md hover:from-green-500 hover:to-green-600 transition-all duration-300 ease-in-out"
               >
                 Compare Now
-              </span>
+              </button>
             </div>
 
             {/* HR Recruiter */}
+            {/*
             <div className="flex flex-col items-center">
               <span className="text-center font-bold text-gray-500">
                 Start shortlisting candidates
@@ -64,6 +66,7 @@ export default function Home() {
                 HR Recruiter
               </span>
             </div>
+            */}
           </div>
         </section>
 
@@ -73,7 +76,7 @@ export default function Home() {
           <p className="mb-4">Have questions ?</p>
           <Link
             to="/contact"
-            className="inline-block bg-blue-600 text-white px-10 py-2 rounded-full text-lg font-medium hover:bg-blue-700 transition"
+            className="inline-block bg-blue-600 text-white px-10 py-3 rounded-full text-lg font-medium hover:bg-blue-700 transition"
           >
             Contact Us
           </Link>

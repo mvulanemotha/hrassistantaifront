@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import Header from "../components/Header";
 import chargeServise from "../services/chargeService";
 
-
 const StartComparingFiles = () => {
   // State for text inputs
   const [jobDescriptionText, setJobDescriptionText] = useState("");
@@ -13,14 +12,14 @@ const StartComparingFiles = () => {
   const [loading, setLoading] = useState(false);
   const [scoreText, setScoreText] = useState("");
   const [scoreFile, setScoreFile] = useState("");
-  const [selectedButton, setSelectedButton] = useState("usetext");
+  const [selectedButton, setSelectedButton] = useState("usefile");
 
   // State for file inputs
   const [jobDescriptionFile, setJobDescriptionFile] = useState(null);
   const [cvFile, setCvFile] = useState(null);
 
   // State for explanation button
-  
+
   const [loadingExplanation, setLoadingExplanation] = useState(false);
   const [explanationError, setExplanationError] = useState(null);
   const navigate = useNavigate();
@@ -39,8 +38,8 @@ const StartComparingFiles = () => {
     }
 
     setLoading(true);
-  
-    console.log(localStorage.getItem("user_id"))
+
+    console.log(localStorage.getItem("user_id"));
 
     try {
       const res = await axios.get(`${apiUrl}compare_text_cv_job_description`, {
@@ -110,7 +109,7 @@ const StartComparingFiles = () => {
 
     setLoadingExplanation(true);
     setExplanationError(null);
-    
+
     const formData = new FormData();
     formData.append("job_description_file", jobDescriptionFile);
     formData.append("cv_file", cvFile);
@@ -125,8 +124,8 @@ const StartComparingFiles = () => {
       localStorage.setItem("lowscoreexplanation", res.data.explanation);
       navigate("/lowscoreresult");
     } catch (error) {
-      console.log(error)
-      setLoadingExplanation(false)
+      console.log(error);
+      setLoadingExplanation(false);
     } finally {
       setLoadingExplanation(false);
     }
@@ -137,8 +136,8 @@ const StartComparingFiles = () => {
     try {
       setLoadingExplanation(true);
       setExplanationError(null);
-      
-      console.log(localStorage.getItem("user_id"))
+
+      console.log(localStorage.getItem("user_id"));
 
       await axios
         .post(`${apiUrl}explain_low_score_in_text`, {
@@ -172,44 +171,48 @@ const StartComparingFiles = () => {
 
       {/*  section to have clickable button */}
       <div className="text-center p-8 bg-gray-100 rounded-lg gap-8">
-        <p className="text-lg lg:text-xl max-w-2xl mx-auto mb-4">
-        Start Comparing Your CV with Job Adverts
+        <p className="text-sm font-mono lg:text-xl max-w-2xl mx-auto mb-8">
+          <span className="text-red-400 font-bold">Hire</span>
+          <span className="font-bond">AI</span> doesn’t just compare. It helps
+          the user align their CV so it mirrors the language of the job advert.
         </p>
-        <span>
-          {" "}
-          <button
-            onClick={() => {
-              setSelectedButton("usetext");
-            }}
-            className={` text-gray-800 cursor-pointer bg-green-200 p-1 px-8 py-2 rounded-full ${selectedButton === "usetext" ? "border-2 border-red-500" : ""}`}
-          >
-            Use Text
-          </button>
-        </span>
-        <span>
-          {" "}
-          <button
-            onClick={() => {
-              setSelectedButton("usefile");
-            }}
-            className={`cursor-pointer bg-green-200 p-1 px-8 py-2 text-gray-800 rounded-full ${selectedButton === "usefile" ? "border-2 border-red-500" : ""}`}
-          >
-            Use Files{" "}
-          </button>{" "}
-        </span>
+        <div className="bg-gray-200 py-2 rounded-lg">
+          <span>
+            {" "}
+            <button
+              onClick={() => {
+                setSelectedButton("usefile");
+              }}
+              className={`cursor-pointer bg-green-300 p-1 px-8 py-2 text-gray-800 rounded-full ${selectedButton === "usefile" ? "border-2 border-gray-500" : ""}`}
+            >
+              Use Files{" "}
+            </button>{" "}
+          </span>
+          <span>
+            {" "}
+            <button
+              onClick={() => {
+                setSelectedButton("usetext");
+              }}
+              className={` text-gray-800 cursor-pointer bg-green-300 p-1 px-8 py-2 rounded-full ${selectedButton === "usetext" ? "border-2 border-gray-500" : ""}`}
+            >
+              Use Text
+            </button>
+          </span>
+        </div>
       </div>
 
       {/* Upload & Input Section */}
       <section className="px-6 py-2 bg-gray-100">
         <h3 className="text-3xl font-bold text-center mb-2">
           {selectedButton === "usetext" && (
-            <span className=" text-2xl font-bold mb-8 text-gray-700">
+            <span className=" text-sm font-bold mb-8 text-gray-700">
               Paste & Compare
             </span>
           )}
 
           {selectedButton === "usefile" && (
-            <span className=" text-2xl font-bold mb-8 text-gray-700">
+            <span className=" text-sm font-bold mb-8 text-gray-700">
               Upload Files & Compare
             </span>
           )}
@@ -222,7 +225,7 @@ const StartComparingFiles = () => {
                 Job Description Text
               </label>
               <textarea
-                rows="3"
+                rows="2"
                 className="w-full border rounded-xl p-3 mb-6 focus:ring focus:outline-none"
                 placeholder="Paste the job description here..."
                 value={jobDescriptionText}
@@ -232,18 +235,18 @@ const StartComparingFiles = () => {
                 Candidate CV Text
               </label>
               <textarea
-                rows="3"
+                rows="2"
                 className="w-full border rounded-xl p-3 focus:ring focus:outline-none"
                 placeholder="Paste the CV text here..."
                 value={cvText}
                 onChange={(e) => setCvText(e.target.value)}
               />
               <button
-                className="mt-4 py-2 px-4 bg-green-300 rounded-full"
+                className="mt-4 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full"
                 onClick={handleCompareText}
                 disabled={loading}
               >
-                { loading ? "Comparing ..." : "Start Comparing" }
+                {loading ? "Comparing ..." : "Start Comparing"}
               </button>
               <span className="pl-4 text-red-500 font-bold underline">
                 {scoreText}
@@ -279,7 +282,7 @@ const StartComparingFiles = () => {
                     accept=".pdf,.docx,.txt,.doc"
                     onChange={(e) => setJobDescriptionFile(e.target.files[0])}
                     className="w-full border border-gray-300 rounded-xl p-3 
-                 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 
+                 bg-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 
                  transition duration-200 shadow-sm"
                   />
                 </div>
@@ -293,7 +296,7 @@ const StartComparingFiles = () => {
                     accept=".pdf,.docx,.txt,.doc"
                     onChange={(e) => setCvFile(e.target.files[0])}
                     className="w-full border border-gray-300 rounded-xl p-3 
-                 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 
+                 bg-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 
                  transition duration-200 shadow-sm"
                   />
                 </div>
@@ -304,8 +307,7 @@ const StartComparingFiles = () => {
                 className="mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-xl font-medium"
                 disabled={loading}
               >
-                
-                { loading ? "Comparing your files ... " : "Start Comparing" }
+                {loading ? "Comparing your files ... " : "Start Comparing"}
               </button>
               <span className="pl-4 text-red-500 font-bold underline">
                 {scoreFile}

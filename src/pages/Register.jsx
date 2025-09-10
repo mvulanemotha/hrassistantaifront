@@ -13,6 +13,7 @@ export default function Register() {
   const [confirmPassword, setConfirmpassword] = useState("");
   const [contact, setContact] = useState("");
   const [country, setCountry] = useState("Eswatini");
+  const [userType, setUserType] = useState("USER");
   const [countries, setCountries] = useState([
     { name: "Eswatini", code: "SZ", phone_code: "+268" },
     { name: "Angola", code: "AO", phone_code: "+244" },
@@ -103,19 +104,7 @@ export default function Register() {
       return;
     }
 
-    // Get user type from localStorage
-    const userType = localStorage.getItem("userType");
-    if (!userType) {
-      toast.warning("User type not selected");
-      return;
-    }
-
-    if (userType === undefined || userType === null || userType === "") {
-      navigate("/");
-      toast.warning("User type not selected");
-      return;
-    }
-
+    
     console.log(userType + "Testing");
 
     setIsloading(true);

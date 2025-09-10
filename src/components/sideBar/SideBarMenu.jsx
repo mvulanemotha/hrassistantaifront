@@ -3,6 +3,7 @@ import { FaBars , FaCloudDownloadAlt } from "react-icons/fa";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
 import { GrCompare ,GrSearchAdvanced } from "react-icons/gr";
+import { IoIosNotificationsOutline } from "react-icons/io";
 import { ImHistory } from "react-icons/im";
 import { BsCreditCard2Back } from "react-icons/bs";
 import { CiSettings } from "react-icons/ci";
@@ -22,8 +23,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
   const userType = localStorage.getItem("userType");
 
   const handleLogout = () => {
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("user_type");
+    localStorage.clear();
     navigate("/login");
   };
 
@@ -43,8 +43,9 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
           isOpen ? "translate-x-0 w-64" : "-translate-x-full w-64"
         } md:translate-x-0 md:w-64`}
       >
-        <div className="p-4 text-2xl font-bold border-b text-red-500">
-          HireAI
+        <div className="p-4 text-2xl font-bold pl-14">
+          <span className="text-red-500">Hire</span>
+          <span className="text-gray-600">AI</span>
         </div>
 
         <nav className="flex flex-col p-4 gap-4 text-gray-700">
@@ -129,6 +130,18 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 <FaCloudDownloadAlt className="h-6 w-12 text-gray-500" />
                 Generate CV
               </NavLink> 
+                 <NavLink
+                to="/notifications"
+                onClick={handleLinkClick}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
+                    isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
+                  }`
+                }
+              >
+                <IoIosNotificationsOutline className="h-6 w-12 text-green-700 bg-text-blue" />
+                Notifications
+              </NavLink>
               <NavLink
                 to="/addunits"
                 onClick={handleLinkClick}

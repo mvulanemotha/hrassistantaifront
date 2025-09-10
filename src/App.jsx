@@ -16,6 +16,7 @@ import Settings from "./pages/Settings";
 import Chargies from "./pages/Chargies";
 import LowScoreExplanation from "./pages/Explanation";
 import ForgotPassword from "./pages/ForgotPassword";
+import Notification from "./pages/Notification";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
         <Route path="settings" element={<Settings />} />
         <Route path="chargies" element={<Chargies />} />
         <Route path="lowscoreresult" element={<LowScoreExplanation />} />
+        <Route path="notifications" element={<Notification />} />
       </Route>
       <Route path="comparecvs" element={<ClientHome />} />
       <Route path="forgotpass" element={ <ForgotPassword/> } />
