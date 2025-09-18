@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 
 export default function Contact() {
   return (
+    <>
+    
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800 flex flex-col">
       {/* ✅ Header */}
       <nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-400">
@@ -69,6 +71,7 @@ export default function Contact() {
         © {new Date().getFullYear()} HRAssistant AI. All rights reserved.
       </footer>
     </div>
+    </>
   );
 }
 

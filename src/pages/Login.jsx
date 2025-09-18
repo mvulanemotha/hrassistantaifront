@@ -67,24 +67,23 @@ export default function Login() {
   // get credits of a user
   const getUserCredits = async () => {
     try {
-
-      
       if (localStorage.getItem("user_id") === undefined) return;
       console.log("we have a user id");
-      console.log(localStorage.getItem("user_id"))
+      console.log(localStorage.getItem("user_id"));
 
       await axios
         .get(`${apiUrl}get_credits/${localStorage.getItem("user_id")}`)
         .then((res) => {
           const creditData = res.data;
-          console.log(res)
-          console.log(creditData); 
+          console.log(res);
+          console.log(creditData);
           const total = creditData.reduce((sum, item) => sum + item.amount, 0);
 
           console.log(total);
           localStorage.setItem("credits", total);
-        }).catch(resError=>{
-          console.log(resError)
+        })
+        .catch((resError) => {
+          console.log(resError);
         });
     } catch (err) {
       console.log(err);
@@ -110,9 +109,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800">
-      <nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-400">
-        <div className="text-2xl font-bold border-b text-red-500">HireAI</div>
-      </nav>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50 px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -178,7 +174,9 @@ export default function Login() {
             </Link>
           </p>
           <p className="text-center mt-4">
-            <Link to="/forgotpass" className="text-blue-600 hover:text-red-400">Forgot password</Link>
+            <Link to="/forgotpass" className="text-blue-600 hover:text-red-400">
+              Forgot password
+            </Link>
           </p>
         </motion.div>
       </div>

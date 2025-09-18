@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import frontImg from "../assets/mergedcvandadvertjob.png";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -23,26 +24,32 @@ export default function Home() {
       {/* Main Content Wrapper */}
       <main className="flex-grow">
         {/* About Section */}
-        <section id="about" className="px-6 py-16 bg-gray-50 text-center">
-          <h3 className="text-3xl font-bold mb-6">
-            About <span className="text-red-500">HireAI</span>{" "}
-          </h3>
-          <p className="max-w-3xl mx-auto text-lg font-medium text-gray-500">
-            HireAI is built to empower job seekers with intelligent
-            tools for career success. Users can upload their CVs and instantly
-            compare them with job adverts to see how well they align. This helps
-            identify strengths, gaps, and opportunities to tailor
-            applications—boosting their chances of landing interviews and job
-            offers.
-          </p>
-        </section>
+        <div>
+          <section id="about" className="px-6 py-16  text-center">
+            <h3 className="text-3xl font-bold mb-6">
+              About <span className="text-red-500">HireAI</span>{" "}
+            </h3>
+            <p className="max-w-3xl mx-auto text-lg font-medium text-blue-900">
+              HireAI is built to empower job seekers with intelligent tools for
+              career success. Users can upload their CVs and instantly compare
+              them with job adverts to see how well they align. This helps
+              identify strengths, gaps, and opportunities to tailor
+              applications—boosting their chances of landing interviews and job
+              offers.
+            </p>
+          </section>
+        </div>
 
-        {/* Login Section */}
-        <section id="login" className="px-6 py-4 bg-white">
+        <div
+          className="w-full h-60 lg:h-80 bg-cover bg-center rounded-lg text-center flex items-center justify-center"
+          style={{ backgroundImage: `url(${frontImg})` }}
+        >
+          {/* Login Section */}
+
           <div className="flex justify-center gap-12">
             {/* Job Seeker */}
             <div className="flex flex-col items-center">
-              <span className="text-center text-lg font-bold text-green-600">
+              <span className="text-center text-2xl font-bold text-red-600">
                 Looking for your next opportunity?
               </span>
               <button
@@ -68,7 +75,7 @@ export default function Home() {
             </div>
             */}
           </div>
-        </section>
+        </div>
 
         {/* Contact Section */}
         <section id="contact" className="px-6 py-16 bg-white text-center">

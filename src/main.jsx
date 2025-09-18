@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css"; // import the styles
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter basename="/hrassistantai">
+    <BrowserRouter basename="/hrassistantai/">
       <App />
       {/* Your routes */}
       <ToastContainer

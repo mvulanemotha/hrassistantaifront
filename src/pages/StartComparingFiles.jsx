@@ -176,7 +176,7 @@ const StartComparingFiles = () => {
           <span className="font-bond">AI</span> doesn’t just compare. It helps
           the user align their CV so it mirrors the language of the job advert.
         </p>
-        <div className="bg-gray-200 py-2 rounded-lg">
+        <div className="bg-gray-200 py-2 rounded-lg sm:w-1/2 mx-auto flex justify-center gap-4">
           <span>
             {" "}
             <button
@@ -319,7 +319,7 @@ const StartComparingFiles = () => {
                   <button
                     onClick={handleGetExplanation}
                     disabled={loadingExplanation}
-                    className="ml-4 mt-4 bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded"
+                    className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded"
                   >
                     {loadingExplanation
                       ? "Loading explanation..."
