@@ -17,6 +17,10 @@ import Chargies from "./pages/Chargies";
 import LowScoreExplanation from "./pages/Explanation";
 import ForgotPassword from "./pages/ForgotPassword";
 import Notification from "./pages/Notification";
+import HomeAdmin from "./admin/HomeAdmin";
+import ProtectedAdmin from "./admin/components/ProtectedAdmin";
+import AdminLayout from "./admin/components/AdminLayout";
+import Processcvs from "./admin/processcvs";
 
 function App() {
   return (
@@ -26,6 +30,20 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/contact" element={<Contact />} />
+
+      {/* admin routes */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedAdmin>
+            <AdminLayout />
+          </ProtectedAdmin>
+        }
+      >
+        {/* Admin nested routes can be added here if needed */}
+        <Route index element={<HomeAdmin />} />
+        <Route path="processcvs" element={<Processcvs />} />
+      </Route>
 
       {/* Routes that use the sidebar layout */}
       <Route
@@ -48,7 +66,7 @@ function App() {
         <Route path="notifications" element={<Notification />} />
       </Route>
       <Route path="comparecvs" element={<ClientHome />} />
-      <Route path="forgotpass" element={ <ForgotPassword/> } />
+      <Route path="forgotpass" element={<ForgotPassword />} />
     </Routes>
   );
 }

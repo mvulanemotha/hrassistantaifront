@@ -62,6 +62,18 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 }
               >
                 <IoCloudUploadOutline className="h-6 w-12" />
+                UPLOAD CVs
+              </NavLink>
+              <NavLink
+                to="/uploadcvs"
+                onClick={handleLinkClick}
+                className={({ isActive }) =>
+                  `flex items-center gap-3  py-2 rounded-lg hover:bg-blue-100 transition ${
+                    isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
+                  }`
+                }
+              >
+                <IoCloudUploadOutline className="h-6 w-12" />
                 Upload CVs
               </NavLink>
               <NavLink
@@ -153,6 +165,60 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
               >
                 <BsCreditCard2Back className="h-6 w-12 text-orange-500" />
                 Add Credits
+              </NavLink>
+                <NavLink
+                to="/chargies"
+                onClick={handleLinkClick}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
+                    isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
+                  }`
+                }
+              >
+                <FcDataSheet  className="h-8 w-12 text-gray-800" />
+                Chargies
+              </NavLink>
+              <NavLink
+                to="/settings"
+                onClick={handleLinkClick}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
+                    isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
+                  }`
+                }
+              >
+                <CiSettings className="h-8 w-12 text-gray-800" />
+                Settings
+              </NavLink>
+            </>
+          )}
+
+            {userType === "ADMIN" && (
+            <>
+            <NavLink
+                to="/admin"
+                end
+                onClick={handleLinkClick}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
+                    isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
+                  }`
+                }
+              >
+                <GrCompare className="h-6 w-12" />
+                Dashboard
+              </NavLink>
+              <NavLink
+                to="/admin/processcvs"
+                onClick={handleLinkClick}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
+                    isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
+                  }`
+                }
+              >
+                <GrCompare className="h-6 w-12" />
+                Process CVs
               </NavLink>
                 <NavLink
                 to="/chargies"

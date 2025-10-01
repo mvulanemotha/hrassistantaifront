@@ -170,12 +170,13 @@ const StartComparingFiles = () => {
       {/* Hero Section */}
 
       {/*  section to have clickable button */}
-      <div className="text-center p-8 bg-gray-100 rounded-lg gap-8">
+      <div className="text-center p-8 bg-gray-50 rounded-lg gap-8">
         <p className="text-sm font-mono lg:text-xl max-w-2xl mx-auto mb-8">
           <span className="text-red-400 font-bold">Hire</span>
           <span className="font-bond">AI</span> doesn’t just compare. It helps
           the user align their CV so it mirrors the language of the job advert.
         </p>
+        { /* 
         <div className="bg-gray-200 py-2 rounded-lg sm:w-1/2 mx-auto flex justify-center gap-4">
           <span>
             {" "}
@@ -200,10 +201,11 @@ const StartComparingFiles = () => {
             </button>
           </span>
         </div>
+          */}
       </div>
 
       {/* Upload & Input Section */}
-      <section className="px-6 py-2 bg-gray-100">
+      <section className="px-6 py-2 bg-gray-50">
         <h3 className="text-3xl font-bold text-center mb-2">
           {selectedButton === "usetext" && (
             <span className=" text-sm font-bold mb-8 text-gray-700">
@@ -212,7 +214,7 @@ const StartComparingFiles = () => {
           )}
 
           {selectedButton === "usefile" && (
-            <span className=" text-sm font-bold mb-8 text-gray-700">
+            <span className=" text-lg font-bold mb-8 text-gray-700">
               Upload Files & Compare
             </span>
           )}
@@ -282,7 +284,7 @@ const StartComparingFiles = () => {
                     accept=".pdf,.docx,.txt,.doc"
                     onChange={(e) => setJobDescriptionFile(e.target.files[0])}
                     className="w-full border border-gray-300 rounded-xl p-3 
-                 bg-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 
+                 bg-gray-100 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 
                  transition duration-200 shadow-sm"
                   />
                 </div>
@@ -296,7 +298,7 @@ const StartComparingFiles = () => {
                     accept=".pdf,.docx,.txt,.doc"
                     onChange={(e) => setCvFile(e.target.files[0])}
                     className="w-full border border-gray-300 rounded-xl p-3 
-                 bg-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 
+                 bg-gray-100 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 
                  transition duration-200 shadow-sm"
                   />
                 </div>
@@ -314,16 +316,17 @@ const StartComparingFiles = () => {
               </span>
 
               {/* Show button if scoreFile exists and score < 70 */}
+              <div>
               {scoreFile &&
-                parseFloat(scoreFile.match(/(\d+(\.\d+)?)/)?.[0]) < 70 && (
+                parseFloat(scoreFile.match(/(\d+(\.\d+)?)/)?.[0]) < 80 && (
                   <button
                     onClick={handleGetExplanation}
                     disabled={loadingExplanation}
-                    className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded"
+                    className="mt-4 bg-green-500  hover:bg-yellow-600 text-white py-2 px-4 rounded-xl"
                   >
                     {loadingExplanation
                       ? "Loading explanation..."
-                      : "Why is my score low?"}
+                      : "View Explanation"}
                   </button>
                 )}
               {/* Show explanation error */}
@@ -332,6 +335,7 @@ const StartComparingFiles = () => {
                   Error: {explanationError}
                 </div>
               )}
+              </div>
             </div>
           )}
         </div>

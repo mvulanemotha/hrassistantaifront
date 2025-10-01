@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import Header from "../components/Header";
 
 const Notification = () => {
-  
   const apiUrl = import.meta.env.VITE_API_URL;
   const [notifications, setNotifications] = useState([]);
   const [filterStatus, setFilterStatus] = useState("all");
@@ -13,7 +12,7 @@ const Notification = () => {
   // NEW: state for fullscreen image
   const [selectedImage, setSelectedImage] = useState(null);
 
-  console.log(localStorage.getItem("user_id"))
+  console.log(localStorage.getItem("user_id"));
 
   const fetchNotifications = async () => {
     try {
@@ -22,7 +21,11 @@ const Notification = () => {
       });
       setNotifications(response.data);
     } catch (error) {
-      toast.error("Failed to fetch notifications");
+      if (error.status === 400) {
+        console.log("No notifications found for this user.");
+      } else {
+        toast.error("Failed to fetch notifications");
+      }
     }
   };
 
@@ -73,138 +76,141 @@ const Notification = () => {
 
   return (
     <>
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800">  
-    <Header />
-      <section className="px-6 py-8 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <h3 className="text-1xl font-bold mb-6">View Your Cv Status</h3>
+      <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800">
+        <Header />
+        <section className="px-6 py-8 bg-gray-50">
+          <div className="max-w-6xl mx-auto">
+            <h3 className="text-1xl font-bold mb-6">View Your Cv Status</h3>
 
-          {notifications.length === 0 ? (
-            <p className="max-w-3xl mx-auto text-lg font-medium text-gray-500 text-center py-12">
-              You currently have no new notifications.
-            </p>
-          ) : (
-            <>
-              {/* Filters and Sorting */}
-              <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-                <div className="flex items-center gap-4">
-                  <label
-                    htmlFor="status-filter"
-                    className="text-sm font-medium text-gray-700"
-                  >
-                    Filter by status:
-                  </label>
-                  <select
-                    id="status-filter"
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                    className="rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                  >
-                    <option value="all">All</option>
-                    <option value="pending">Pending</option>
-                    <option value="processing">Processing</option>
-                    <option value="completed">Completed</option>
-                    <option value="failed">Failed</option>
-                  </select>
+            {notifications.length === 0 ? (
+              <p className="max-w-3xl mx-auto text-lg font-medium text-gray-500 text-center py-12">
+                You currently have no new notifications.
+              </p>
+            ) : (
+              <>
+                {/* Filters and Sorting */}
+                <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                  <div className="flex items-center gap-4">
+                    <label
+                      htmlFor="status-filter"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Filter by status:
+                    </label>
+                    <select
+                      id="status-filter"
+                      value={filterStatus}
+                      onChange={(e) => setFilterStatus(e.target.value)}
+                      className="rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    >
+                      <option value="all">All</option>
+                      <option value="pending">Pending</option>
+                      <option value="processing">Processing</option>
+                      <option value="completed">Completed</option>
+                      <option value="failed">Failed</option>
+                    </select>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <label
+                      htmlFor="sort-order"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Sort by:
+                    </label>
+                    <select
+                      id="sort-order"
+                      value={sortOrder}
+                      onChange={(e) => setSortOrder(e.target.value)}
+                      className="rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    >
+                      <option value="newest">Newest First</option>
+                      <option value="oldest">Oldest First</option>
+                    </select>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  <label
-                    htmlFor="sort-order"
-                    className="text-sm font-medium text-gray-700"
-                  >
-                    Sort by:
-                  </label>
-                  <select
-                    id="sort-order"
-                    value={sortOrder}
-                    onChange={(e) => setSortOrder(e.target.value)}
-                    className="rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                  >
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Notifications Table */}
-              <div className="bg-white shadow-md rounded-lg overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Template
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Submitted At
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {sortedNotifications.map((notification) => (
-                        <tr key={notification.id} className="hover:bg-gray-50">
-                          <td className="px-0 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-500 shadow-lg hover:cursor-pointer">
-                              <img
-                                src={`cv_templates/img/${notification.template_cv}.jpeg`}
-                                className="w-full sm:w-40 md:w-48 lg:w-56 xl:w-64 object-cover rounded-lg cursor-pointer"
-                                alt="Template Preview"
-                                onClick={() =>
-                                  setSelectedImage(
-                                    `cv_templates/img/${notification.template_cv}.jpeg`
-                                  )
-                                }
-                              />
-                            </div>
-                          </td>
-
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span
-                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
-                                notification.status
-                              )}`}
-                            >
-                              {notification.status.charAt(0).toUpperCase() +
-                                notification.status.slice(1)}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {formatDate(notification.created_at)}
-                          </td>
+                {/* Notifications Table */}
+                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Template
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Submitted At
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {sortedNotifications.map((notification) => (
+                          <tr
+                            key={notification.id}
+                            className="hover:bg-gray-50"
+                          >
+                            <td className="px-0 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-500 shadow-lg hover:cursor-pointer">
+                                <img
+                                  src={`cv_templates/img/${notification.template_cv}.jpeg`}
+                                  className="w-full sm:w-40 md:w-48 lg:w-56 xl:w-64 object-cover rounded-lg cursor-pointer"
+                                  alt="Template Preview"
+                                  onClick={() =>
+                                    setSelectedImage(
+                                      `cv_templates/img/${notification.template_cv}.jpeg`,
+                                    )
+                                  }
+                                />
+                              </div>
+                            </td>
+
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span
+                                className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                                  notification.status,
+                                )}`}
+                              >
+                                {notification.status.charAt(0).toUpperCase() +
+                                  notification.status.slice(1)}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {formatDate(notification.created_at)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-              </div>
 
-              <div className="mt-4 text-sm text-gray-500 text-center">
-                Showing {filteredNotifications.length} of {notifications.length}{" "}
-                notifications
-              </div>
-            </>
-          )}
-        </div>
-      </section>
+                <div className="mt-4 text-sm text-gray-500 text-center">
+                  Showing {filteredNotifications.length} of{" "}
+                  {notifications.length} notifications
+                </div>
+              </>
+            )}
+          </div>
+        </section>
 
-      {/* Fullscreen Overlay for image */}
-      {selectedImage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50"
-          onClick={() => setSelectedImage(null)}
-        >
-          <img
-            src={selectedImage}
-            className="max-w-full max-h-full object-contain"
-            alt="Full Preview"
-          />
-        </div>
-      )}
-    </div>
+        {/* Fullscreen Overlay for image */}
+        {selectedImage && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50"
+            onClick={() => setSelectedImage(null)}
+          >
+            <img
+              src={selectedImage}
+              className="max-w-full max-h-full object-contain"
+              alt="Full Preview"
+            />
+          </div>
+        )}
+      </div>
     </>
   );
 };
