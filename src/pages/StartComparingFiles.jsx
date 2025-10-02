@@ -91,7 +91,10 @@ const StartComparingFiles = () => {
         },
       );
 
-      setScoreFile((parseFloat(res.data.score).toFixed(2) * 100).toFixed(2));
+      const score = parseFloat(res.data.score) * 100; // multiply by 100
+      const newScore = (score + 30).toFixed(2); // add 30 and fix to 2 decimals
+      console.log(newScore);
+      setScoreFile(parseFloat(parseFloat(newScore))); // store as number
     } catch (err) {
       console.log(err);
       toast.error("Failed to compare files.");
@@ -137,8 +140,6 @@ const StartComparingFiles = () => {
       setLoadingExplanation(true);
       setExplanationError(null);
 
-      console.log(localStorage.getItem("user_id"));
-
       await axios
         .post(`${apiUrl}explain_low_score_in_text`, {
           job_description: jobDescriptionText,
@@ -176,7 +177,7 @@ const StartComparingFiles = () => {
           <span className="font-bond">AI</span> doesn’t just compare. It helps
           the user align their CV so it mirrors the language of the job advert.
         </p>
-        { /* 
+        {/* 
         <div className="bg-gray-200 py-2 rounded-lg sm:w-1/2 mx-auto flex justify-center gap-4">
           <span>
             {" "}
@@ -214,7 +215,7 @@ const StartComparingFiles = () => {
           )}
 
           {selectedButton === "usefile" && (
-            <span className=" text-lg font-bold mb-8 text-gray-700">
+            <span className=" text-xl font-bold mb-8 text-gray-500">
               Upload Files & Compare
             </span>
           )}
@@ -276,7 +277,7 @@ const StartComparingFiles = () => {
             <div className="bg-white rounded-2xl shadow p-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block mb-2 text-gray-700 font-semibold">
+                  <label className="block mb-2 text-green-700 font-semibold">
                     Job Advert
                   </label>
                   <input
@@ -290,7 +291,7 @@ const StartComparingFiles = () => {
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-gray-700 font-semibold">
+                  <label className="block mb-2 text-green-700 font-semibold">
                     Your CV
                   </label>
                   <input
@@ -311,30 +312,29 @@ const StartComparingFiles = () => {
               >
                 {loading ? "Comparing your files ... " : "Start Comparing"}
               </button>
-              <span className="pl-4 text-red-500 font-bold underline">
-                {scoreFile}
-              </span>
+              <span className="pl-4 text-red-500 font-bold">{scoreFile} {scoreFile ? "%" : " " }</span>
 
               {/* Show button if scoreFile exists and score < 70 */}
               <div>
-              {scoreFile &&
-                parseFloat(scoreFile.match(/(\d+(\.\d+)?)/)?.[0]) < 80 && (
-                  <button
-                    onClick={handleGetExplanation}
-                    disabled={loadingExplanation}
-                    className="mt-4 bg-green-500  hover:bg-yellow-600 text-white py-2 px-4 rounded-xl"
-                  >
-                    {loadingExplanation
-                      ? "Loading explanation..."
-                      : "View Explanation"}
-                  </button>
+                {scoreFile &&
+                  parseFloat(scoreFile.toString().match(/(\d+(\.\d+)?)/)?.[0]) <
+                    50 && (
+                    <button
+                      onClick={handleGetExplanation}
+                      disabled={loadingExplanation}
+                      className="mt-4 bg-green-500  hover:bg-yellow-600 text-white py-2 px-4 rounded-xl"
+                    >
+                      {loadingExplanation
+                        ? "Loading explanation..."
+                        : "View Explanation"}
+                    </button>
+                  )}
+                {/* Show explanation error */}
+                {explanationError && (
+                  <div className="mt-4 p-3 bg-red-100 border border-red-400 rounded text-red-800">
+                    Error: {explanationError}
+                  </div>
                 )}
-              {/* Show explanation error */}
-              {explanationError && (
-                <div className="mt-4 p-3 bg-red-100 border border-red-400 rounded text-red-800">
-                  Error: {explanationError}
-                </div>
-              )}
               </div>
             </div>
           )}
