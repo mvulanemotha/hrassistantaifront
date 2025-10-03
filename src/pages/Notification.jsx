@@ -30,7 +30,23 @@ const Notification = () => {
     }
   };
 
-  const downloadCompltedCv = async () => {};
+  const downloadCompletedCv = async (id) => {
+    try {
+      const response = await axios.get(`${apiUrl}download_processed_cv/${id}`, {
+        responseType: "blob",
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "processed_cv_hireai.pdf"); // fixed filename
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      console.error("Download error:", err);
+    }
+  };
 
   useEffect(() => {
     fetchNotifications();
@@ -187,7 +203,7 @@ const Notification = () => {
                                   <button
                                     className="mt-2 bg-blue-600 rounded-md px-3 py-1 text-xs text-white"
                                     onClick={() =>
-                                      downloadCompltedCv(notification.id)
+                                      downloadCompletedCv(notification.id)
                                     }
                                   >
                                     Download CV
