@@ -12,13 +12,14 @@ const Notification = () => {
   // NEW: state for fullscreen image
   const [selectedImage, setSelectedImage] = useState(null);
 
-  console.log(localStorage.getItem("user_id"));
-
   const fetchNotifications = async () => {
     try {
       const response = await axios.get(`${apiUrl}cv_progress`, {
         params: { user_id: localStorage.getItem("user_id") },
       });
+
+      console.log(response.data);
+
       setNotifications(response.data);
     } catch (error) {
       if (error.status === 400) {
@@ -28,6 +29,8 @@ const Notification = () => {
       }
     }
   };
+
+  const downloadCompltedCv = async () => {};
 
   useEffect(() => {
     fetchNotifications();
@@ -168,16 +171,31 @@ const Notification = () => {
                               </div>
                             </td>
 
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span
-                                className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
-                                  notification.status,
-                                )}`}
-                              >
-                                {notification.status.charAt(0).toUpperCase() +
-                                  notification.status.slice(1)}
-                              </span>
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              <div className="flex flex-col items-center justify-center gap-1">
+                                <span
+                                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                                    notification.status,
+                                  )}`}
+                                >
+                                  {notification.status.charAt(0).toUpperCase() +
+                                    notification.status.slice(1)}
+                                </span>
+
+                                {notification.status.toLowerCase() ===
+                                  "completed" && (
+                                  <button
+                                    className="mt-2 bg-blue-600 rounded-md px-3 py-1 text-xs text-white"
+                                    onClick={() =>
+                                      downloadCompltedCv(notification.id)
+                                    }
+                                  >
+                                    Download CV
+                                  </button>
+                                )}
+                              </div>
                             </td>
+
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {formatDate(notification.created_at)}
                             </td>

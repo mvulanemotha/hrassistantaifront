@@ -21,6 +21,7 @@ import HomeAdmin from "./admin/HomeAdmin";
 import ProtectedAdmin from "./admin/components/ProtectedAdmin";
 import AdminLayout from "./admin/components/AdminLayout";
 import Processcvs from "./admin/processcvs";
+import UploadProccessedCv from "./admin/UploadProccessedCv";
 
 function App() {
   return (
@@ -43,6 +44,10 @@ function App() {
         {/* Admin nested routes can be added here if needed */}
         <Route index element={<HomeAdmin />} />
         <Route path="processcvs" element={<Processcvs />} />
+        <Route
+          path="uploadprocessedcv/:user_id/:user_name/:file_id"
+          element={<UploadProccessedCv />}
+        />
       </Route>
 
       {/* Routes that use the sidebar layout */}
