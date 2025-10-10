@@ -6,41 +6,34 @@ import Header from "../components/Header";
 import chargeServise from "../services/chargeService";
 
 const StartComparingFiles = () => {
-  // State for text inputs
   const [jobDescriptionText, setJobDescriptionText] = useState("");
   const [cvText, setCvText] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [scoreText, setScoreText] = useState("");
-  const [scoreFile, setScoreFile] = useState("");
-  const [selectedButton, setSelectedButton] = useState("usefile");
-
-  // State for file inputs
   const [jobDescriptionFile, setJobDescriptionFile] = useState(null);
   const [cvFile, setCvFile] = useState(null);
-
-  // State for explanation button
-
+  const [loading, setLoading] = useState(false);
   const [loadingExplanation, setLoadingExplanation] = useState(false);
+  const [scoreText, setScoreText] = useState(null);
+  const [scoreFile, setScoreFile] = useState(null);
+  const [selectedButton, setSelectedButton] = useState("usefile");
   const [explanationError, setExplanationError] = useState(null);
+
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  // Handler for text comparison
+  // ---------------------------
+  // Text Comparison
+  // ---------------------------
   const handleCompareText = async () => {
-    if (jobDescriptionText === "") {
+    if (!jobDescriptionText.trim()) {
       toast.warning("Job Description missing...");
       return;
     }
-
-    if (cvText === "") {
+    if (!cvText.trim()) {
       toast.warning("CV content missing...");
       return;
     }
 
     setLoading(true);
-
-    console.log(localStorage.getItem("user_id"));
-
     try {
       const res = await axios.get(`${apiUrl}compare_text_cv_job_description`, {
         params: {
@@ -51,22 +44,25 @@ const StartComparingFiles = () => {
         },
       });
 
-      setScoreText((parseFloat(res.data.score).toFixed(2) * 100).toFixed(2));
+      const score = parseFloat(res.data.score) * 100;
+      setScoreText(score.toFixed(2));
     } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to compare texts.");
       console.log(err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Handler for file comparison
+  // ---------------------------
+  // File Comparison
+  // ---------------------------
   const handleCompareFile = async () => {
-    if (jobDescriptionFile === null) {
-      toast.warning("Advert File is missing...");
+    if (!jobDescriptionFile) {
+      toast.warning("Job Advert File is missing...");
       return;
     }
-
-    if (cvFile === null) {
+    if (!cvFile) {
       toast.warning("CV File is missing...");
       return;
     }
@@ -85,25 +81,23 @@ const StartComparingFiles = () => {
         `${apiUrl}compare_cv_advert_documents`,
         formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         },
       );
 
-      const score = parseFloat(res.data.score) * 100; // multiply by 100
-      const newScore = (score + 30).toFixed(2); // add 30 and fix to 2 decimals
-      console.log(newScore);
-      setScoreFile(parseFloat(parseFloat(newScore))); // store as number
+      const score = parseFloat(res.data.score) * 100;
+      setScoreFile(score.toFixed(2));
     } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to compare files.");
       console.log(err);
-      toast.error("Failed to compare files.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Handler to get explanation for low score
+  // ---------------------------
+  // Explanation for low score (files)
+  // ---------------------------
   const handleGetExplanation = async () => {
     if (!jobDescriptionFile || !cvFile) {
       toast.warning("Please upload both files first.");
@@ -126,100 +120,116 @@ const StartComparingFiles = () => {
 
       localStorage.setItem("lowscoreexplanation", res.data.explanation);
       navigate("/lowscoreresult");
-    } catch (error) {
-      console.log(error);
-      setLoadingExplanation(false);
-    } finally {
-      setLoadingExplanation(false);
-    }
-  };
-
-  // get explanation for job descrption and cv text
-  const getExplanation_for_low_score = async () => {
-    try {
-      setLoadingExplanation(true);
-      setExplanationError(null);
-
-      await axios
-        .post(`${apiUrl}explain_low_score_in_text`, {
-          job_description: jobDescriptionText,
-          cv_text: cvText,
-          user_id: localStorage.getItem("user_id"),
-          required_units: Number(chargeServise("get_text_reasoning")),
-        })
-        .then((data) => {
-          localStorage.setItem("lowscoreexplanation", data.data.explanation);
-          navigate("/lowscoreresult");
-        })
-        .catch((err) => {
-          setExplanationError(
-            err.response?.data?.error || "Failed to fetch explanation.",
-          );
-        });
     } catch (err) {
+      setExplanationError(
+        err.response?.data?.error || "Failed to fetch explanation.",
+      );
       console.log(err);
     } finally {
       setLoadingExplanation(false);
     }
   };
 
+  // ---------------------------
+  // Explanation for low score (text)
+  // ---------------------------
+  const handleGetTextExplanation = async () => {
+    if (!jobDescriptionText || !cvText) {
+      toast.warning("Please enter both text fields first.");
+      return;
+    }
+
+    setLoadingExplanation(true);
+    setExplanationError(null);
+
+    try {
+      const { data } = await axios.post(`${apiUrl}explain_low_score_in_text`, {
+        job_description: jobDescriptionText,
+        cv_text: cvText,
+        user_id: localStorage.getItem("user_id"),
+        required_units: Number(chargeServise("get_text_reasoning")),
+      });
+
+      localStorage.setItem("lowscoreexplanation", data.explanation);
+      navigate("/lowscoreresult");
+    } catch (err) {
+      setExplanationError(
+        err.response?.data?.error || "Failed to fetch explanation.",
+      );
+      console.log(err);
+    } finally {
+      setLoadingExplanation(false);
+    }
+  };
+
+  // ---------------------------
+  // Type of score description
+  // ---------------------------
+  const type_of_score = (score) => {
+    if (!score) return <span></span>;
+    const s = parseFloat(score);
+
+    if (s < 40)
+      return (
+        <span className="text-red-600 font-semibold">
+          Your CV doesn’t closely match this job. Tailor your experience to
+          align with requirements.
+        </span>
+      );
+    else if (s < 60)
+      return (
+        <span className="text-orange-500 font-semibold">
+          Partial match. Adding more relevant skills or experience could improve
+          your fit.
+        </span>
+      );
+    else if (s < 75)
+      return (
+        <span className="text-yellow-600 font-semibold">
+          Good alignment. Few tweaks could make your CV stronger.
+        </span>
+      );
+    else if (s < 90)
+      return (
+        <span className="text-green-500 font-semibold">
+          Strong match. You’re well-suited for this position.
+        </span>
+      );
+    else
+      return (
+        <span className="text-blue-600 font-semibold">
+          Excellent match! Your CV is highly aligned with this job.
+        </span>
+      );
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800">
-      {/* Navigation */}
       <Header />
 
       {/* Hero Section */}
-
-      {/*  section to have clickable button */}
       <div className="text-center p-8 bg-gray-50 rounded-lg gap-8">
         <p className="text-sm font-mono lg:text-xl max-w-2xl mx-auto mb-8">
           <span className="text-red-400 font-bold">Hire</span>
           <span className="font-bond">AI</span> doesn’t just compare. It helps
-          the user align their CV so it mirrors the language of the job advert.
+          the user align their CV to mirror the language of the job advert.
         </p>
-        {/* 
-        <div className="bg-gray-200 py-2 rounded-lg sm:w-1/2 mx-auto flex justify-center gap-4">
-          <span>
-            {" "}
-            <button
-              onClick={() => {
-                setSelectedButton("usefile");
-              }}
-              className={`cursor-pointer bg-green-300 p-1 px-8 py-2 text-gray-800 rounded-full ${selectedButton === "usefile" ? "border-2 border-gray-500" : ""}`}
-            >
-              Use Files{" "}
-            </button>{" "}
-          </span>
-          <span>
-            {" "}
-            <button
-              onClick={() => {
-                setSelectedButton("usetext");
-              }}
-              className={` text-gray-800 cursor-pointer bg-green-300 p-1 px-8 py-2 rounded-full ${selectedButton === "usetext" ? "border-2 border-gray-500" : ""}`}
-            >
-              Use Text
-            </button>
-          </span>
-        </div>
-          */}
       </div>
 
       {/* Upload & Input Section */}
       <section className="px-6 py-2 bg-gray-50">
         <h3 className="text-3xl font-bold text-center mb-2">
-          {selectedButton === "usetext" && (
-            <span className=" text-sm font-bold mb-8 text-gray-700">
+          {selectedButton === "usetext" ? (
+            <span className="text-sm font-bold mb-8 text-gray-700">
               Paste & Compare
             </span>
-          )}
-
-          {selectedButton === "usefile" && (
-            <span className=" text-xl font-bold mb-8 text-gray-500">
+          ) : (
+            <span className="text-xl font-bold mb-8 text-gray-500">
               Upload Files & Compare
             </span>
           )}
         </h3>
+
         <div className="max-w-5xl mx-auto">
           {/* Text Inputs */}
           {selectedButton === "usetext" && (
@@ -228,22 +238,24 @@ const StartComparingFiles = () => {
                 Job Description Text
               </label>
               <textarea
-                rows="2"
+                rows="4"
                 className="w-full border rounded-xl p-3 mb-6 focus:ring focus:outline-none"
                 placeholder="Paste the job description here..."
                 value={jobDescriptionText}
                 onChange={(e) => setJobDescriptionText(e.target.value)}
               />
+
               <label className="block mb-2 font-medium">
                 Candidate CV Text
               </label>
               <textarea
-                rows="2"
+                rows="4"
                 className="w-full border rounded-xl p-3 focus:ring focus:outline-none"
                 placeholder="Paste the CV text here..."
                 value={cvText}
                 onChange={(e) => setCvText(e.target.value)}
               />
+
               <button
                 className="mt-4 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full"
                 onClick={handleCompareText}
@@ -251,18 +263,17 @@ const StartComparingFiles = () => {
               >
                 {loading ? "Comparing ..." : "Start Comparing"}
               </button>
-              <span className="pl-4 text-red-500 font-bold underline">
-                {scoreText}
-              </span>
-
-              {/* want to display a button when there is a score  */}
 
               {scoreText && (
-                <div>
+                <div className="mt-2">
+                  <span className="text-red-500 font-bold underline">
+                    {scoreText}%
+                  </span>
+                  <div>{type_of_score(scoreText)}</div>
                   <button
-                    onClick={getExplanation_for_low_score}
+                    onClick={handleGetTextExplanation}
                     disabled={loadingExplanation}
-                    className="ml-1 mt-4 bg-blue-300 hover:bg-yellow-600  py-1 px-6 rounded-lg"
+                    className="mt-2 bg-blue-300 hover:bg-yellow-600 py-1 px-6 rounded-lg"
                   >
                     {loadingExplanation
                       ? "Loading explanation..."
@@ -272,70 +283,66 @@ const StartComparingFiles = () => {
               )}
             </div>
           )}
+
           {/* File Uploads */}
           {selectedButton === "usefile" && (
-            <div className="bg-white rounded-2xl shadow p-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block mb-2 text-green-700 font-semibold">
-                    Job Advert
-                  </label>
-                  <input
-                    type="file"
-                    accept=".pdf,.docx,.txt,.doc"
-                    onChange={(e) => setJobDescriptionFile(e.target.files[0])}
-                    className="w-full border border-gray-300 rounded-xl p-3 
-                 bg-gray-100 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 
-                 transition duration-200 shadow-sm"
-                  />
-                </div>
+            <div className="bg-white rounded-2xl shadow p-6 space-y-4">
+              <div>
+                <label className="block mb-2 text-green-700 font-semibold">
+                  Job Advert
+                </label>
+                <input
+                  type="file"
+                  accept=".pdf,.docx,.txt,.doc"
+                  onChange={(e) => setJobDescriptionFile(e.target.files[0])}
+                  className="w-full border border-gray-300 rounded-xl p-3 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
 
-                <div>
-                  <label className="block mb-2 text-green-700 font-semibold">
-                    Your CV
-                  </label>
-                  <input
-                    type="file"
-                    accept=".pdf,.docx,.txt,.doc"
-                    onChange={(e) => setCvFile(e.target.files[0])}
-                    className="w-full border border-gray-300 rounded-xl p-3 
-                 bg-gray-100 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 
-                 transition duration-200 shadow-sm"
-                  />
-                </div>
+              <div>
+                <label className="block mb-2 text-green-700 font-semibold">
+                  Your CV
+                </label>
+                <input
+                  type="file"
+                  accept=".pdf,.docx,.txt,.doc"
+                  onChange={(e) => setCvFile(e.target.files[0])}
+                  className="w-full border border-gray-300 rounded-xl p-3 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
               </div>
 
               <button
                 onClick={handleCompareFile}
-                className="mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-xl font-medium"
+                className="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-xl font-medium"
                 disabled={loading}
               >
-                {loading ? "Comparing your files ... " : "Start Comparing"}
+                {loading ? "Comparing your files..." : "Start Comparing"}
               </button>
-              <span className="pl-4 text-red-500 font-bold">{scoreFile} {scoreFile ? "%" : " " }</span>
 
-              {/* Show button if scoreFile exists and score < 70 */}
-              <div>
-                {scoreFile &&
-                  parseFloat(scoreFile.toString().match(/(\d+(\.\d+)?)/)?.[0]) <
-                    50 && (
+              {scoreFile && (
+                <div className="mt-2">
+                  <span className="text-red-500 font-bold">{scoreFile}%</span>
+                  <div>{type_of_score(scoreFile)}</div>
+
+                  {scoreFile < 70 && (
                     <button
                       onClick={handleGetExplanation}
                       disabled={loadingExplanation}
-                      className="mt-4 bg-green-500  hover:bg-yellow-600 text-white py-2 px-4 rounded-xl"
+                      className="mt-2 bg-green-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-xl"
                     >
                       {loadingExplanation
                         ? "Loading explanation..."
                         : "View Explanation"}
                     </button>
                   )}
-                {/* Show explanation error */}
-                {explanationError && (
-                  <div className="mt-4 p-3 bg-red-100 border border-red-400 rounded text-red-800">
-                    Error: {explanationError}
-                  </div>
-                )}
-              </div>
+
+                  {explanationError && (
+                    <div className="mt-4 p-3 bg-red-100 border border-red-400 rounded text-red-800">
+                      Error: {explanationError}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Router } from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -22,6 +22,7 @@ import ProtectedAdmin from "./admin/components/ProtectedAdmin";
 import AdminLayout from "./admin/components/AdminLayout";
 import Processcvs from "./admin/processcvs";
 import UploadProccessedCv from "./admin/UploadProccessedCv";
+import Jobs from "./pages/Jobs";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/contact" element={<Contact />} />
+      <Route path="/jobs" element={<Jobs />} />
 
       {/* admin routes */}
       <Route

@@ -1,14 +1,13 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaBars , FaCloudDownloadAlt } from "react-icons/fa";
+import { FaBars, FaCloudDownloadAlt } from "react-icons/fa";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
-import { GrCompare ,GrSearchAdvanced } from "react-icons/gr";
+import { GrCompare, GrSearchAdvanced } from "react-icons/gr";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { ImHistory } from "react-icons/im";
 import { BsCreditCard2Back } from "react-icons/bs";
 import { CiSettings } from "react-icons/ci";
 import { FcDataSheet } from "react-icons/fc";
-
 
 const SidebarMenu = ({ isOpen, setIsOpen }) => {
   const handleLinkClick = () => {
@@ -88,7 +87,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 <GrSearchAdvanced className="h-6 w-12" />
                 Find Best Matches
               </NavLink>
-                   <NavLink
+              <NavLink
                 to="/startcomparing"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
@@ -141,8 +140,8 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
               >
                 <FaCloudDownloadAlt className="h-6 w-12 text-gray-500" />
                 Generate CV
-              </NavLink> 
-                 <NavLink
+              </NavLink>
+              <NavLink
                 to="/notifications"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
@@ -166,7 +165,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 <BsCreditCard2Back className="h-6 w-12 text-orange-500" />
                 Add Credits
               </NavLink>
-                <NavLink
+              <NavLink
                 to="/chargies"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
@@ -175,8 +174,8 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                   }`
                 }
               >
-                <FcDataSheet  className="h-8 w-12 text-gray-800" />
-                Chargies
+                <FcDataSheet className="h-8 w-12 text-gray-800" />
+                Charges
               </NavLink>
               <NavLink
                 to="/settings"
@@ -193,9 +192,9 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
             </>
           )}
 
-            {userType === "ADMIN" && (
+          {userType === "ADMIN" && (
             <>
-            <NavLink
+              <NavLink
                 to="/admin"
                 end
                 onClick={handleLinkClick}
@@ -220,7 +219,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 <GrCompare className="h-6 w-12" />
                 Process CVs
               </NavLink>
-                <NavLink
+              <NavLink
                 to="/chargies"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
@@ -229,8 +228,8 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                   }`
                 }
               >
-                <FcDataSheet  className="h-8 w-12 text-gray-800" />
-                Chargies
+                <FcDataSheet className="h-8 w-12 text-gray-800" />
+                Charges
               </NavLink>
               <NavLink
                 to="/settings"

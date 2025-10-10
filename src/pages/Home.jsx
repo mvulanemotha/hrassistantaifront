@@ -19,6 +19,13 @@ export default function Home() {
       {/* Navigation */}
       <nav className="flex justify-between items-center px-8 py-4 shadow border-b border-gray-400">
         <div className="text-2xl font-bold border-b text-red-500">HireAI</div>
+        { /* <Link
+          to="/jobs"
+          className="text-1xl font-bold text-blue-400 cursor-pointer underline"
+        >
+          Jobs
+        </Link>
+        */ }
       </nav>
 
       {/* Main Content Wrapper */}
