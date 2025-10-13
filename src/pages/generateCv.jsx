@@ -14,6 +14,7 @@ const GenerateCv = () => {
   const [cvName, setCvName] = useState("");
   const [generatedDocxUrl, setGeneratedDocxUrl] = useState(null);
   const [loading, setIsloading] = useState(false);
+  
 
   const itemsPerPage = 3;
   const totalPages = Math.ceil(templates.length / itemsPerPage);

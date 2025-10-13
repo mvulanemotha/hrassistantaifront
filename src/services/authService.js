@@ -52,7 +52,8 @@ export async function register({
   password,
   country,
   contact,
+  referal_code
 }) {
-  return postJSON(`${apiUrl}newuser`, {name,email,user,password,country,contact,
+  return postJSON(`${apiUrl}newuser`, {name,email,user,password,country,contact,referal_code
   });
 }

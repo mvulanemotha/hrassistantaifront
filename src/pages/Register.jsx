@@ -14,6 +14,8 @@ export default function Register() {
   const [contact, setContact] = useState("");
   const [country, setCountry] = useState("Eswatini");
   const [userType, setUserType] = useState("USER");
+  const [referal_code, setReferalCode] = useState(null);
+
   const [countries, setCountries] = useState([
     { name: "Eswatini", code: "SZ", phone_code: "+268" },
     { name: "Angola", code: "AO", phone_code: "+244" },
@@ -104,7 +106,6 @@ export default function Register() {
       return;
     }
 
-    
     console.log(userType + "Testing");
 
     setIsloading(true);
@@ -117,6 +118,7 @@ export default function Register() {
         password: password,
         contact: fullContact,
         country: country,
+        referal_code: referal_code,
       });
 
       // Handle response
@@ -173,7 +175,9 @@ export default function Register() {
           <div className="space-y-6">
             {/* Full Name */}
             <div>
-              <label className="block mb-1 font-medium">Full Name</label>
+              <label className="block mb-1 font-medium">
+                Full Name<span className="text-red-400">*</span>
+              </label>
               <input
                 type="text"
                 value={name}
@@ -185,7 +189,9 @@ export default function Register() {
 
             {/* Email */}
             <div>
-              <label className="block mb-1 font-medium">Email</label>
+              <label className="block mb-1 font-medium">
+                Email<span className="text-red-400">*</span>
+              </label>
               <input
                 type="email"
                 value={email}
@@ -222,7 +228,9 @@ export default function Register() {
 
             {/* Contact Number */}
             <div>
-              <label className="block mb-1 font-medium">Contact</label>
+              <label className="block mb-1 font-medium">
+                Contact<span className="text-red-400">*</span>
+              </label>
               <div className="flex">
                 <span className="inline-flex items-center px-3 border border-r-0 rounded-l-lg bg-gray-50 text-gray-500">
                   {countries.find((c) => c.name === country)?.phone_code}
@@ -239,9 +247,24 @@ export default function Register() {
               </div>
             </div>
 
+            <div>
+              <label className="block mb-1 font-medium">
+                Referal Code <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                value={referal_code}
+                onChange={(e) => setReferalCode(e.target.value)}
+                className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="XVSGFE"
+              />
+            </div>
+
             {/* Password */}
             <div>
-              <label className="block mb-1 font-medium">Password</label>
+              <label className="block mb-1 font-medium">
+                Password <span className="text-red-400">*</span>
+              </label>
               <input
                 type="password"
                 value={password}
@@ -253,7 +276,9 @@ export default function Register() {
 
             {/* Confirm Password */}
             <div>
-              <label className="block mb-1 font-medium">Confirm Password</label>
+              <label className="block mb-1 font-medium">
+                Confirm Password<span className="text-red-400">*</span>
+              </label>
               <input
                 type="password"
                 value={confirmPassword}

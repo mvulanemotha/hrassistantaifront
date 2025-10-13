@@ -175,7 +175,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 }
               >
                 <FcDataSheet className="h-8 w-12 text-gray-800" />
-                Charges
+                Pricing
               </NavLink>
               <NavLink
                 to="/settings"
@@ -229,7 +229,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 }
               >
                 <FcDataSheet className="h-8 w-12 text-gray-800" />
-                Charges
+                Pricing
               </NavLink>
               <NavLink
                 to="/settings"
