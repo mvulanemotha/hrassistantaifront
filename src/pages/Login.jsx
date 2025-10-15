@@ -29,12 +29,12 @@ export default function Login() {
       if (email === "mkhululi" && password === "admin123") {
         localStorage.setItem("userType", "ADMIN"); // instead of "admin"
         localStorage.setItem("name", "admin");
-        console.log("redirecting to admin");
         navigate("/admin");
         return;
       }
 
       setLoading(true);
+
       const response = await login({ email, password });
 
       setLoading(false);
@@ -43,6 +43,7 @@ export default function Login() {
       localStorage.setItem("name", response.name);
       localStorage.setItem("userType", response.user);
       localStorage.setItem("email", response.email);
+      localStorage.setItem("referral_code", response.referral_code || "ZAGYTH");
 
       if (response) {
         getUserCredits();

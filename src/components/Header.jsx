@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 
 const Header = () => {
-  const [credits, setCredits] = useState(localStorage.getItem("credits"));
+  const [credits, setCredits] = useState(localStorage.getItem("credits") || 0);
+  const [referralCode, setReferralCode] = useState(
+    localStorage.getItem("referral_code") || 0,
+  );
 
-  // Update credits every 500ms to ensure freshness
+  // Update credits and referral code every 500ms
   useEffect(() => {
     const interval = setInterval(() => {
-      const currentCredits = localStorage.getItem("credits");
-      setCredits(currentCredits);
+      setCredits(localStorage.getItem("credits") || 0);
+      setReferralCode(localStorage.getItem("referral_code") || 0);
     }, 500);
 
     return () => clearInterval(interval);
@@ -16,17 +19,24 @@ const Header = () => {
   return (
     <nav className="flex justify-between items-center px-8 py-4 shadow">
       <h3 className="text-1xl text-blue-600 hidden sm:flex">
-        <span className="">Welcome</span>
-        <span className="text-sm text-gray-800 p-1">
-          ( {localStorage.getItem("name")} )
+        <span></span>
+        <span className="text-sm text-gray-800 p-1 font-semibold">
+          {localStorage.getItem("name")}
         </span>
       </h3>
 
-      <div className="ml-auto space-x-4 flex items-center">
-        <span className="text-red-300 font-mono">
+      <div className="ml-auto space-x-6 flex items-center">
+        <span className="text-gray-500 font-mono text-sm font-bold">
+          R Code:{" "}
+          <span className="rounded-lg text-green-500 font-extrabold underline">
+            {referralCode || 0}
+          </span>
+        </span>
+
+        <span className="text-gray-500 font-mono text-sm">
           Credits:{" "}
           <span className="rounded-lg text-green-500 font-extrabold underline">
-            {credits ? credits : 0}
+            {credits || 0}
           </span>
         </span>
       </div>

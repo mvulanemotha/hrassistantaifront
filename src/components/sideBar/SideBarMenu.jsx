@@ -8,6 +8,7 @@ import { ImHistory } from "react-icons/im";
 import { BsCreditCard2Back } from "react-icons/bs";
 import { CiSettings } from "react-icons/ci";
 import { FcDataSheet } from "react-icons/fc";
+import { MdOutlinePersonAdd } from "react-icons/md";
 
 const SidebarMenu = ({ isOpen, setIsOpen }) => {
   const handleLinkClick = () => {
@@ -166,6 +167,18 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 Add Credits
               </NavLink>
               <NavLink
+                to="/referrals"
+                onClick={handleLinkClick}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
+                    isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
+                  }`
+                }
+              >
+                <MdOutlinePersonAdd  className="h-8 w-12 text-green-600" />
+                Referrals
+              </NavLink>
+              <NavLink
                 to="/chargies"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
@@ -218,6 +231,18 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
               >
                 <GrCompare className="h-6 w-12" />
                 Process CVs
+              </NavLink>
+                <NavLink
+                to="/admin/customers"
+                onClick={handleLinkClick}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
+                    isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
+                  }`
+                }
+              >
+                <GrCompare className="h-6 w-12" />
+                Customers
               </NavLink>
               <NavLink
                 to="/chargies"

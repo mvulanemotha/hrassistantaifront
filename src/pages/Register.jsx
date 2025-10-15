@@ -14,7 +14,7 @@ export default function Register() {
   const [contact, setContact] = useState("");
   const [country, setCountry] = useState("Eswatini");
   const [userType, setUserType] = useState("USER");
-  const [referal_code, setReferalCode] = useState(null);
+  const [referal_code, setReferalCode] = useState("");
 
   const [countries, setCountries] = useState([
     { name: "Eswatini", code: "SZ", phone_code: "+268" },
@@ -118,7 +118,7 @@ export default function Register() {
         password: password,
         contact: fullContact,
         country: country,
-        referal_code: referal_code,
+        referral_code: referal_code,
       });
 
       // Handle response
@@ -249,7 +249,7 @@ export default function Register() {
 
             <div>
               <label className="block mb-1 font-medium">
-                Referal Code <span className="text-red-400">*</span>
+                Referal Code
               </label>
               <input
                 type="text"

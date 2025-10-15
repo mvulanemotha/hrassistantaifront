@@ -23,6 +23,8 @@ import AdminLayout from "./admin/components/AdminLayout";
 import Processcvs from "./admin/processcvs";
 import UploadProccessedCv from "./admin/UploadProccessedCv";
 import Jobs from "./pages/Jobs";
+import Referrals from "./pages/Referrals";
+import Customers from "./admin/Customers";
 
 function App() {
   return (
@@ -50,6 +52,9 @@ function App() {
           path="uploadprocessedcv/:user_id/:user_name/:file_id"
           element={<UploadProccessedCv />}
         />
+        <Route path="customers" element={<Customers/>}>
+
+        </Route>
       </Route>
 
       {/* Routes that use the sidebar layout */}
@@ -71,6 +76,7 @@ function App() {
         <Route path="chargies" element={<Chargies />} />
         <Route path="lowscoreresult" element={<LowScoreExplanation />} />
         <Route path="notifications" element={<Notification />} />
+        <Route path="referrals" element={<Referrals/>} />
       </Route>
       <Route path="comparecvs" element={<ClientHome />} />
       <Route path="forgotpass" element={<ForgotPassword />} />
