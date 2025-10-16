@@ -1,26 +1,27 @@
+import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaBars, FaCloudDownloadAlt } from "react-icons/fa";
-import { IoCloudUploadOutline } from "react-icons/io5";
-import { MdLogout } from "react-icons/md";
-import { GrCompare, GrSearchAdvanced } from "react-icons/gr";
 import { IoIosNotificationsOutline } from "react-icons/io";
+import { GrCompare, GrSearchAdvanced } from "react-icons/gr";
 import { ImHistory } from "react-icons/im";
 import { BsCreditCard2Back } from "react-icons/bs";
 import { CiSettings } from "react-icons/ci";
 import { FcDataSheet } from "react-icons/fc";
-import { MdOutlinePersonAdd } from "react-icons/md";
+import { MdOutlinePersonAdd, MdLogout } from "react-icons/md";
 
 const SidebarMenu = ({ isOpen, setIsOpen }) => {
-  const handleLinkClick = () => {
-    if (window.innerWidth < 768) {
-      setIsOpen(false);
-    }
-  };
-
   const navigate = useNavigate();
-
-  // Read user type from localStorage (e.g., 'hr' or 'client')
   const userType = localStorage.getItem("userType");
+  const [newCV, setNewCV] = useState(false);
+
+  // Load new CV badge state from localStorage
+  useEffect(() => {
+    setNewCV(localStorage.getItem("new_cv") === "true");
+  }, []);
+
+  const handleLinkClick = () => {
+    if (window.innerWidth < 768) setIsOpen(false);
+  };
 
   const handleLogout = () => {
     localStorage.clear();
@@ -56,19 +57,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 to="/uploadcvs"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3  py-2 rounded-lg hover:bg-blue-100 transition ${
-                    isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
-                  }`
-                }
-              >
-                <IoCloudUploadOutline className="h-6 w-12" />
-                UPLOAD CVs
-              </NavLink>
-              <NavLink
-                to="/uploadcvs"
-                onClick={handleLinkClick}
-                className={({ isActive }) =>
-                  `flex items-center gap-3  py-2 rounded-lg hover:bg-blue-100 transition ${
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
                     isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
                   }`
                 }
@@ -80,7 +69,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 to="/findmatch"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3  py-2 rounded-lg hover:bg-blue-100 transition ${
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
                     isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
                   }`
                 }
@@ -92,13 +81,13 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 to="/startcomparing"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3  py-2 rounded-lg hover:bg-blue-100 transition ${
+                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
                     isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
                   }`
                 }
               >
                 <GrCompare className="h-6 w-12" />
-                Compare Cv
+                Compare CV
               </NavLink>
               <NavLink
                 to="/matchhistory"
@@ -146,13 +135,18 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 to="/notifications"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
+                  `relative flex items-center gap-3 py-2 rounded-lg hover:bg-blue-100 transition ${
                     isActive ? "bg-blue-200 text-blue-700 font-semibold" : ""
                   }`
                 }
               >
-                <IoIosNotificationsOutline className="h-6 w-12 text-green-700 bg-text-blue" />
+                <IoIosNotificationsOutline className="h-6 w-12 text-green-700" />
                 Notifications
+                {newCV && (
+                  <span className="absolute -top-2 -right-2 text-white bg-green-600 rounded-full px-1 py-1 text-xs font-bold">
+                    new
+                  </span>
+                )}
               </NavLink>
               <NavLink
                 to="/addunits"
@@ -175,7 +169,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                   }`
                 }
               >
-                <MdOutlinePersonAdd  className="h-8 w-12 text-green-600" />
+                <MdOutlinePersonAdd className="h-8 w-12 text-green-600" />
                 Referrals
               </NavLink>
               <NavLink
@@ -205,6 +199,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
             </>
           )}
 
+          {/* Admin Routes */}
           {userType === "ADMIN" && (
             <>
               <NavLink
@@ -232,7 +227,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                 <GrCompare className="h-6 w-12" />
                 Process CVs
               </NavLink>
-                <NavLink
+              <NavLink
                 to="/admin/customers"
                 onClick={handleLinkClick}
                 className={({ isActive }) =>
@@ -274,7 +269,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
 
         {/* Logout button */}
         <div
-          className=" p-4  gap-2 text-red-600 cursor-pointer mt-20"
+          className="p-4 gap-2 text-red-600 cursor-pointer mt-20"
           onClick={handleLogout}
         >
           <NavLink

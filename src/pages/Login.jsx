@@ -44,6 +44,9 @@ export default function Login() {
       localStorage.setItem("userType", response.user);
       localStorage.setItem("email", response.email);
       localStorage.setItem("referral_code", response.referral_code || "ZAGYTH");
+      localStorage.setItem("new_cv", response.new_cv);
+
+      console.log(response);
 
       if (response) {
         getUserCredits();

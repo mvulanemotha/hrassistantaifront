@@ -32,7 +32,10 @@ const Notification = () => {
 
   const downloadCompletedCv = async (id) => {
     try {
-      const response = await axios.get(`${apiUrl}download_processed_cv/${id}`, {
+
+      const user_id = localStorage.getItem("user_id")
+       
+      const response = await axios.get(`${apiUrl}download_processed_cv/${id}/${user_id}`, {
         responseType: "blob",
       });
 
