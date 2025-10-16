@@ -22,11 +22,11 @@ const LowScoreExplanation = () => {
       <section className="px-6 py-12">
         <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-2">
           <motion.h2
-            className="text-3xl font-bold text-center text-gray-400 mb-6"
+            className="text-2xl font-bold text-center text-gray-400 mb-6"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            Score Explanation
+            Detailed Analysis
           </motion.h2>
 
           {/* Explanation */}
