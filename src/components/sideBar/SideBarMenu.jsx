@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaBars, FaCloudDownloadAlt } from "react-icons/fa";
+import { FaBars, FaCloudDownloadAlt , FaFileUpload } from "react-icons/fa";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { GrCompare, GrSearchAdvanced } from "react-icons/gr";
 import { ImHistory } from "react-icons/im";
@@ -62,7 +62,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                   }`
                 }
               >
-                <IoCloudUploadOutline className="h-6 w-12" />
+                <FaFileUpload className="h-6 w-12 text-green-600" />
                 Upload CVs
               </NavLink>
               <NavLink
@@ -74,7 +74,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                   }`
                 }
               >
-                <GrSearchAdvanced className="h-6 w-12" />
+                <GrSearchAdvanced className="h-6 w-12 text-red-500" />
                 Find Best Matches
               </NavLink>
               <NavLink
@@ -86,7 +86,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                   }`
                 }
               >
-                <GrCompare className="h-6 w-12" />
+                <GrCompare className="h-6 w-12 text-gray-400" />
                 Compare CV
               </NavLink>
               <NavLink
@@ -98,7 +98,7 @@ const SidebarMenu = ({ isOpen, setIsOpen }) => {
                   }`
                 }
               >
-                <ImHistory className="h-6 w-12" />
+                <ImHistory className="h-6 w-12 text-blue-400" />
                 Match History
               </NavLink>
             </>

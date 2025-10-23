@@ -13,7 +13,7 @@ export default function Register() {
   const [confirmPassword, setConfirmpassword] = useState("");
   const [contact, setContact] = useState("");
   const [country, setCountry] = useState("Eswatini");
-  const [userType, setUserType] = useState("USER");
+  const [userType, setUserType] = useState(localStorage.getItem("userType"));
   const [referal_code, setReferalCode] = useState("");
 
   const [countries, setCountries] = useState([
@@ -248,9 +248,7 @@ export default function Register() {
             </div>
 
             <div>
-              <label className="block mb-1 font-medium">
-                Referal Code
-              </label>
+              <label className="block mb-1 font-medium">Referal Code</label>
               <input
                 type="text"
                 value={referal_code}

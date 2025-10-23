@@ -25,6 +25,7 @@ import UploadProccessedCv from "./admin/UploadProccessedCv";
 import Jobs from "./pages/Jobs";
 import Referrals from "./pages/Referrals";
 import Customers from "./admin/Customers";
+import HomeHr from "./hr/HomeHr"
 
 function App() {
   return (
@@ -35,6 +36,8 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/jobs" element={<Jobs />} />
+      <Route path="/hrhome" element={ <HomeHr/> } />
+
 
       {/* admin routes */}
       <Route

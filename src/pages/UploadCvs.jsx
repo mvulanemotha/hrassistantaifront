@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 
 export default function UploadCvs() {
@@ -11,14 +10,6 @@ export default function UploadCvs() {
   const apiUrl = import.meta.env.VITE_API_URL;
   const handleFileChange = (e) => {
     setSelectedFiles([...e.target.files]);
-  };
-
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("user_id");
-    toast.success("Logged out successfully.");
-    navigate("/login");
   };
 
   const handleSubmit = async (e) => {
@@ -59,7 +50,7 @@ export default function UploadCvs() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800">
       {/* ✅ Header (same as landing page) */}
-      <Header/>  
+      <Header />
 
       {/* ✅ Hero Section */}
       <section className="text-center px-6 py-16 lg:py-24">
@@ -72,12 +63,8 @@ export default function UploadCvs() {
           Upload Your CVs with Ease
         </motion.h2>
         <p className="text-lg max-w-2xl mx-auto mb-4">
-          HRAssistant AI streamlines recruitment by letting you upload multiple
-          CVs at once.
-        </p>
-        <p className="text-lg max-w-3xl mx-auto text-gray-600">
-          Our AI-powered engine parses and analyzes your uploaded CVs, helping
-          you shortlist candidates faster and more accurately.
+          <span className="text-red-400 font-bold">Hire</span>AI streamlines recruitment by letting you upload multiple CVs at
+          once.
         </p>
       </section>
 

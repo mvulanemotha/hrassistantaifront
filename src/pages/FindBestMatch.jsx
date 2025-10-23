@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MdOutlineCloudDownload } from "react-icons/md";
 import { CiSaveDown2 } from "react-icons/ci";
@@ -7,42 +7,36 @@ import { getMatches, saveMatches } from "../services/matchesService";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import axios from "axios";
-import { useEffect } from "react";
 import Header from "../components/Header";
 
 export default function FindBestMatch() {
   const [jobDescription, setJobDescription] = useState("");
-  const [matchedCandidates, setMatchedCandidates] = useState([]);
+  const [matchedCandidates, setMatchedCandidates] = useState([]); // ✅ stored in backend format
   const [loading, setLoading] = useState(false);
   const [jobTitle, setJobTitles] = useState([]);
   const [selectedJobTitle, setSelectedJobTitle] = useState("");
+  const [summary, setSummary] = useState(null);
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const user_id = localStorage.getItem("user_id");
 
-  const handleJobChange = (e) => {
-    setSelectedJobTitle(e.target.value);
-  };
+  const handleJobChange = (e) => setSelectedJobTitle(e.target.value);
 
-  //using useeffect to get jobtitles on load
   useEffect(() => {
     getJobTitles();
   }, [user_id]);
 
-  //select job titles
   const getJobTitles = async () => {
-    const res = await axios.get(`${apiUrl}user_cvs/`, {
-      params: { user_id },
-    });
-
-    setJobTitles(Object.keys(res.data));
+    try {
+      const res = await axios.get(`${apiUrl}user_cvs/`, { params: { user_id } });
+      setJobTitles(Object.keys(res.data));
+    } catch (err) {
+      toast.error("Failed to load job titles.");
+    }
   };
 
-  // ✅ Fetch matches
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log(selectedJobTitle);
 
     if (selectedJobTitle === "" || selectedJobTitle === "none") {
       toast.warning("Please select a job title.");
@@ -56,100 +50,92 @@ export default function FindBestMatch() {
 
     setLoading(true);
     setMatchedCandidates([]);
+    setSummary(null);
 
     try {
-      const res = await getMatches(jobDescription);
+      const res = await getMatches(jobDescription, user_id, selectedJobTitle);
+      console.log("Backend response:", res);
 
-      if (!res.matches || res.matches.length === 0) {
+      if (!res.top_matches || res.top_matches.length === 0) {
         toast.info("No matches found.");
-        setLoading(false);
         return;
       }
 
-      const scores = res.matches.map((m) => m.Score);
-      const minScore = Math.min(...scores);
-      const maxScore = Math.max(...scores);
+      // Decode preview
+      const decodedJobPreview = decodeURIComponent(res.job_description_preview || "");
 
-      const processed = res.matches.map((m) => {
-        const percentage =
-          maxScore === minScore
-            ? 100
-            : ((maxScore - m.Score) / (maxScore - minScore)) * 100;
-        return {
-          file_name: m.file_name,
-          percentage: percentage.toFixed(2),
-          score: percentage.toFixed(2), //m.Score, // ✅ keep this for saving to DB
-          matched_content: m.Matched_content,
-        };
+      // Transform matches to backend schema
+      const processedMatches = res.top_matches.map((m) => ({
+        file_name: m.file_name,
+        score: Number(m.similarity_score), // backend expects number
+        matched_content: m.matched_content || "", // default to empty string
+        percentage: (m.similarity_score * 100).toFixed(2), // for display
+      }));
+
+      setMatchedCandidates(processedMatches);
+
+      setSummary({
+        total_cvs: res.total_cvs_searched,
+        matches_found: res.matches_found,
+        method: res.matching_method,
+        job_preview: decodedJobPreview,
       });
-
-      setMatchedCandidates(processed);
     } catch (error) {
-      setLoading(false);
+      console.error(error);
       toast.error("An error occurred while finding matches.");
     } finally {
       setLoading(false);
     }
   };
 
-  //save matches
   const saveMatcheFound = async () => {
     if (matchedCandidates.length === 0) {
       toast.warning("No matches to save.");
       return;
     }
 
-    const user_id = localStorage.getItem("user_id"); //user_id
-    const res = await saveMatches({
-      user_id,
-      jobDescription,
-      matchedCandidates,
-      job_title: selectedJobTitle,
-    });
-    console.log(res);
+    // Transform to match backend schema (remove percentage)
+    const transformedCandidates = matchedCandidates.map((c) => ({
+      file_name: c.file_name,
+      score: c.score,
+      matched_content: c.matched_content || "",
+    }));
 
-    if (res) {
-      toast.success("Matches saved successfully.");
-    }
+    const res = await saveMatches({
+      user_id: Number(user_id), // ensure number
+      jobDescription,
+      job_title: selectedJobTitle,
+      matchedCandidates: transformedCandidates,
+    });
+
+    if (res) toast.success("Matches saved successfully.");
   };
 
-  // ✅ Download to Excel
   const handleDownload = () => {
     if (matchedCandidates.length === 0) {
       toast.warning("No matches to download!");
       return;
     }
 
-    // Create a worksheet from JSON
     const worksheet = XLSX.utils.json_to_sheet(
       matchedCandidates.map((c) => ({
         "File Name": c.file_name,
         "Match Score (%)": c.percentage,
-      })),
+      }))
     );
-
-    // Create a workbook and append the worksheet
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Matches");
-
-    // Generate a buffer and save using FileSaver
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: "xlsx",
-      type: "array",
-    });
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     const data = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(data, "matched_candidates.xlsx");
 
-    // ✅ Show success toast
-    toast.success("Matches downloaded successfully, view your file in the download folder.");
+    toast.success("Matches downloaded successfully!");
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 text-gray-800 flex flex-col">
-      {/* ✅ Header */}
-      <Header/>
+      <Header />
 
-      {/* ✅ Hero Section */}
       <section className="text-center px-6 py-10 lg:py-16">
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
@@ -160,30 +146,25 @@ export default function FindBestMatch() {
           Find the Best Match for Your Job
         </motion.h2>
         <p className="text-lg max-w-3xl mx-auto mb-4">
-          Paste your job description on the left, and see matched candidates on
-          the right.
+          Paste your job description on the left, and see matched candidates on the right.
         </p>
       </section>
 
-      {/* ✅ Two-column main content */}
       <main className="flex flex-col md:flex-row flex-1 px-6 py-6 gap-6 max-w-7xl mx-auto w-full">
-        {/* Left column */}
-
+        {/* Left: Job description */}
         <div className="md:w-1/2 bg-white rounded-2xl shadow-lg p-6 flex flex-col">
           <div className="p-1 mb-3">
-            <label className="block font-medium mb-2 text-blue-600 text-xl rounded-lg">
+            <label className="block font-medium mb-2 text-blue-600 text-xl">
               Select Job Title:
             </label>
             <select
               value={selectedJobTitle}
               onChange={handleJobChange}
-              className=" border-gray-300 border rounded-lg px-3 py-2 w-full"
+              className="border-gray-300 border rounded-lg px-3 py-2 w-full"
             >
               <option value="none">-- Select --</option>
-              {jobTitle.map((job, index) => (
-                <option key={index} value={job}>
-                  {job}
-                </option>
+              {jobTitle.map((job, i) => (
+                <option key={i} value={job}>{job}</option>
               ))}
             </select>
           </div>
@@ -207,30 +188,30 @@ export default function FindBestMatch() {
           </form>
         </div>
 
-        {/* Right column */}
+        {/* Right: Match results */}
         <div className="md:w-1/2 bg-gray-50 rounded-2xl shadow-inner p-6 flex flex-col">
           <h5 className="text-xl mb-4 text-blue-600">Matched Applications</h5>
-          <div
-            className="flex-1 overflow-y-auto space-y-4"
-            style={{ maxHeight: "400px" }}
-          >
-            {loading && (
-              <p className="text-gray-500">Searching for matches...</p>
-            )}
+
+          {/* Summary */}
+          {summary && (
+            <div className="bg-white p-4 rounded-lg shadow mb-4">
+              <p><strong>Job Description:</strong> {summary.job_preview}</p>
+              <p><strong>Total CVs Searched:</strong> {summary.total_cvs}</p>
+              <p><strong>Matches Found:</strong> {summary.matches_found}</p>
+              <p><strong>Matching Method:</strong> {summary.method}</p>
+            </div>
+          )}
+
+          <div className="flex-1 overflow-y-auto space-y-4" style={{ maxHeight: "400px" }}>
+            {loading && <p className="text-gray-500">Searching for matches...</p>}
             {!loading && matchedCandidates.length === 0 && (
               <p className="text-gray-500">No matches yet.</p>
             )}
             {!loading &&
-              matchedCandidates.length > 0 &&
               matchedCandidates.map((candidate, index) => (
-                <div
-                  key={index}
-                  className="p-4 rounded-xl bg-white shadow hover:shadow-md transition"
-                >
+                <div key={index} className="p-4 rounded-xl bg-white shadow hover:shadow-md transition">
                   <span className="font-bold">{index + 1}.</span>
-                  <h4 className="text-lg font-semibold mb-1">
-                    {candidate.file_name}
-                  </h4>
+                  <h4 className="text-lg font-semibold mb-1">{candidate.file_name}</h4>
                   <p className="text-sm text-gray-600 mb-2">
                     Match Score:{" "}
                     <span className="font-bold text-green-600">
@@ -246,7 +227,9 @@ export default function FindBestMatch() {
                 </div>
               ))}
           </div>
-          <div className="mt-3 pl-1 flex gap-3">
+
+          {/* Buttons */}
+          <div className="mt-3 flex gap-3">
             <button
               onClick={saveMatcheFound}
               className="bg-green-500 rounded-lg px-4 py-2 text-white flex items-center gap-2 hover:bg-green-600"
@@ -257,17 +240,11 @@ export default function FindBestMatch() {
               onClick={handleDownload}
               className="bg-green-500 rounded-lg px-4 py-2 text-white flex items-center gap-2 hover:bg-green-600"
             >
-              Download File
-              <MdOutlineCloudDownload className="text-xl" />
+              Download File <MdOutlineCloudDownload className="text-xl" />
             </button>
           </div>
         </div>
       </main>
-
-      {/* ✅ Footer */}
-      <footer className="px-6 py-4 bg-gray-100 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} HRAssistant AI. All rights reserved.
-      </footer>
     </div>
   );
 }

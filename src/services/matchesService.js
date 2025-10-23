@@ -41,16 +41,25 @@ async function getJSON(url) {
   return res.json(); // ✅ always return parsed JSON if ok
 }
 
-export function getMatches(job_description) {
+
+//user_id,job_title:selectedJobTitle , job_description:jobDescription
+export function getMatches(job_description, user_id, job_title) {
   const query = encodeURIComponent(job_description);
-  return getJSON(`${apiUrl}compare_job_description?job_description=${query}`);
+  const params = new URLSearchParams({
+    job_description: query,
+    user_id: user_id?.toString() || '',
+    job_title: job_title || '',
+  });
+
+  return getJSON(`${apiUrl}match_job_advert?${params.toString()}`);
 }
+
 
 export function historyMatches() {
   return getJSON(`${apiUrl}compare_job_description`);
 }
 
-export function saveMatches(data) {
-  console.log(data)
-  return postJSON(`${apiUrl}save_matches`, data);
+export function saveMatches(payload) {
+  console.log(payload)
+  return postJSON(`${apiUrl}save_matches`, payload);
 }

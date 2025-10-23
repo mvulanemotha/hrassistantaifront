@@ -2,15 +2,12 @@ import { Link, useNavigate } from "react-router-dom";
 import frontImg from "../assets/mergedcvandadvertjob.png";
 
 export default function Home() {
+  
   const navigate = useNavigate();
-  const hangleLogin = (user_type) => {
-    if (user_type === "HR") {
-      localStorage.setItem("userType", "HR");
-      navigate("/login");
-    } else {
+  
+  const hangleLogin = () => {
       localStorage.setItem("userType", "USER");
       navigate("/login");
-    }
   };
 
   return (
@@ -60,7 +57,7 @@ export default function Home() {
                 Looking for your next opportunity?
               </span>
               <button
-                onClick={() => hangleLogin("USER")}
+                onClick={() => hangleLogin()}
                 className="mt-4 px-6 py-3 bg-gradient-to-r from-red-600 to-red-800 text-white text-lg font-semibold rounded-2xl shadow-md hover:from-green-500 hover:to-green-600 transition-all duration-300 ease-in-out"
               >
                 Compare Now
